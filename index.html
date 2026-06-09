@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALCANTARILLA - Streetwear & AI Try-On</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff; 
+            overflow-x: hidden; 
+            background-image: url('Images/fondo.png');
+            background-repeat: repeat;
+            background-size: 300px;
+            background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent; /* Quita el recuadro azul molesto al tocar en móviles */
+        }
+
+        .drawer-transition { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .talla-activa { background-color: #b91c1c !important; color: #ffffff !important; border-color: #b91c1c !important; }
+        
+        /* Ajuste para que la vista rápida funcione al tocar en celulares */
+        .group\/img img { transition: transform 0.7s cubic-bezier(0.15, 0.85, 0.45, 1), opacity 0.5s ease-in-out; }
+        @media (hover: none) {
+            .group\/img:active > div { opacity: 1 !important; }
+            .group\/img:active > img:nth-child(2) { opacity: 1 !important; }
+        }
+
+        /* EASTER EGGS ANIMATIONS */
+        .pest-container { position: fixed; font-size: 55px; z-index: 9999; pointer-events: none; color: transparent; text-shadow: 0 0 0 #050505; opacity: 0.85; }
+        .rat-path { top: 0; left: 0; animation: pathRat 35s linear infinite; }
+        .roach-path { top: 0; left: 0; animation: pathRoach 25s linear infinite; }
+        .rat-body { display: inline-block; animation: ratScurry 0.12s infinite alternate; }
+        .roach-body { display: inline-block; animation: roachJitter 0.05s infinite alternate; }
+
+        @keyframes pathRat {
+            0% { transform: translate(-10vw, 85vh) scaleX(-1); opacity: 1; }
+            15% { transform: translate(110vw, 85vh) scaleX(-1); opacity: 1; }
+            15.1% { opacity: 0; }
+            45% { opacity: 0; transform: translate(110vw, 15vh) scaleX(1); }
+            45.1% { opacity: 1; transform: translate(110vw, 15vh) scaleX(1); }
+            60% { transform: translate(-10vw, 15vh) scaleX(1); opacity: 1; }
+            60.1% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        @keyframes pathRoach {
+            0% { opacity: 0; transform: translate(20vw, -10vh) rotate(180deg); }
+            5% { opacity: 1; }
+            20% { transform: translate(20vw, 110vh) rotate(180deg); opacity: 1; }
+            20.1% { opacity: 0; }
+            50% { opacity: 0; transform: translate(75vw, 110vh) rotate(0deg); }
+            55% { opacity: 1; transform: translate(75vw, 110vh) rotate(0deg); }
+            70% { transform: translate(75vw, -10vh) rotate(0deg); opacity: 1; }
+            70.1% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        @keyframes ratScurry { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-5px) rotate(4deg); } }
+        @keyframes roachJitter { 0% { transform: translateX(0) rotate(-3deg); } 100% { transform: translateX(-2px) rotate(3deg); } }
+
+        @keyframes scrollInfinito {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .carousel-track {
+            display: flex;
+            gap: 24px;
+            width: max-content;
+            will-change: transform;
+            animation: scrollInfinito 40s linear infinite;
+        }
+
+        .carousel-track:hover { animation-play-state: paused; }
+    </style>
+</head>
+<body class="relative min-h-screen opacity-0 transition-opacity duration-700 ease-out">
+
+    <header class="border-b border-white/10 bg-black/40 backdrop-blur-2xl sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
+            <div class="flex items-center gap-4 flex-shrink-0">
+                <a href="index.html" class="block"><img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-20 w-20 object-cover object-center rounded-full shadow-2xl border border-white/10"></a>
+               
+            </div>
+
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-neutral-300 bg-white/5 px-6 py-2 rounded-full border border-white/10 shadow-inner backdrop-blur-md">
+                <a href="#" class="hover:text-white transition">Novedades</a>
+                <a href="Colecciones.html" class="hover:text-white transition">Colecciones</a>
+                <a href="#probador-ia" class="text-[#b91c1c] hover:text-[#dc2626] transition flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    PROBADOR IA
+                </a>
+            </nav>
+
+            <div class="flex items-center space-x-2 sm:space-x-3 text-neutral-300">
+                <button onclick="toggleFavDrawer()" class="relative cursor-pointer hover:text-white transition bg-white/5 p-2.5 rounded-full border border-white/10 hover:bg-white/10 backdrop-blur-md">
+                    <svg class="w-5 h-5 text-rose-500 fill-rose-500" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    <span id="fav-count" class="absolute -top-1 -right-1 bg-white text-black text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                </button>
+                <button onclick="toggleCartDrawer()" class="relative cursor-pointer hover:text-white transition bg-white/5 p-2.5 rounded-full border border-white/10 hover:bg-white/10 backdrop-blur-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-[#b91c1c] text-white text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center animate-pulse">0</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden relative cursor-pointer hover:text-white transition bg-white/5 p-2.5 rounded-full border border-white/10 hover:bg-white/10 backdrop-blur-md">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mt-4">
+        <div class="space-y-6 bg-black/40 p-6 md:p-10 rounded-3xl border border-white/10 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
+            <span class="text-xs font-bold tracking-widest text-[#b91c1c] uppercase">Nueva Temporada 2026</span>
+            <h1 class="text-5xl md:text-7xl font-black text-white uppercase tracking-tighter">TRAE TU <br> <span class="text-neutral-400">PROPIA</span> <span class="text-[#b91c1c]">PINTA.</span></h1>
+            <p class="text-neutral-300 text-lg">Streetwear premium que define tu estilo. Prueba cada prenda virtualmente antes de comprar.</p>
+            <div class="flex flex-wrap gap-4 pt-4">
+                <a href="#productos-seccion" class="bg-white text-black font-bold px-8 py-3 rounded hover:bg-neutral-200 transition shadow-lg">[ Comprar Ahora ]</a>
+                <a href="#probador-ia" class="border border-[#b91c1c] bg-white/5 text-[#b91c1c] font-bold px-8 py-3 rounded hover:bg-[#b91c1c] hover:text-white transition shadow-lg">[ IA 📸 ]</a>
+            </div>
+        </div>
+        <div class="relative bg-black/50 rounded-2xl overflow-hidden aspect-square border border-white/10 shadow-2xl">
+            <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=600" class="w-full h-full object-cover opacity-80">
+            <div class="absolute top-6 right-6 text-[#b91c1c] font-mono text-xs tracking-widest uppercase bg-black/60 px-3 py-1 rounded-full backdrop-blur-md border border-[#b91c1c]/30">Vibes only</div>
+        </div>
+    </section>
+
+    <section id="probador-ia" class="max-w-7xl mx-auto px-4 py-16 mt-10 bg-black/40 border border-white/10 rounded-3xl backdrop-blur-2xl shadow-2xl">
+        <div class="mb-10 text-center md:text-left">
+            <span class="text-xs font-bold text-[#b91c1c] tracking-widest uppercase">Tecnología Inteligente</span>
+            <h2 class="text-3xl font-extrabold text-white mt-1">Probador Virtual AI Try-On</h2>
+            <p class="text-neutral-300 text-sm max-w-md mt-2">Sube tu foto y renderiza en tiempo real cómo se te verían nuestras prendas exclusivas.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <div class="bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col justify-between backdrop-blur-lg">
+                <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-4">1. Sube tu Imagen</h3>
+                <div class="border-2 border-dashed border-white/20 hover:border-[#b91c1c] rounded-xl aspect-[3/4] flex flex-col items-center justify-center p-4 text-center cursor-pointer transition group bg-black/20">
+                    <svg class="w-8 h-8 text-neutral-400 group-hover:text-[#b91c1c] transition mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <p class="text-xs text-neutral-300 font-medium">Arrastra tu foto o <span class="text-[#b91c1c] underline">explora</span></p>
+                </div>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col justify-between backdrop-blur-lg">
+                <div>
+                    <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-4">2. Prenda</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="border-2 border-[#b91c1c] bg-black/40 p-2 rounded-xl cursor-pointer relative shadow-inner">
+                            <img src="Images/playeraverde.png" class="w-full aspect-[4/5] object-cover rounded-lg mb-2 opacity-90">
+                            <p class="text-[11px] font-bold text-white truncate uppercase">Alcantarilla</p>
+                            <span class="absolute top-2 right-2 bg-[#b91c1c] text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">✓</span>
+                        </div>
+                        <div class="border border-white/10 hover:border-white/30 bg-black/40 p-2 rounded-xl cursor-pointer transition shadow-inner">
+                            <img src="Images/playeranegrechino.png" class="w-full aspect-[4/5] object-cover rounded-lg mb-2 opacity-70">
+                            <p class="text-[11px] font-bold text-neutral-400 truncate uppercase">Hoodie</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="w-full bg-[#b91c1c] text-white font-black py-3 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition mt-6">⚡ Generar Vista</button>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 p-6 rounded-2xl flex flex-col justify-between backdrop-blur-lg">
+                <h3 class="text-white font-bold text-sm uppercase tracking-wider mb-4">3. Resultado IA</h3>
+                <div class="relative bg-black/40 rounded-xl aspect-[3/4] overflow-hidden border border-white/10 flex items-center justify-center shadow-inner">
+                    <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=500" class="w-full h-full object-cover opacity-90">
+                    <div class="absolute bottom-3 left-3 bg-black/70 border border-[#b91c1c]/50 px-3 py-1.5 rounded-lg backdrop-blur-md">
+                        <p class="text-[9px] uppercase tracking-wider text-[#b91c1c] font-bold">Ajuste Virtual</p>
+                        <p class="text-[11px] font-bold text-white">Match 98.4%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="productos-seccion" class="w-full py-20 mt-10 bg-black/30 border-y border-white/10 relative backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-end mb-8 bg-black/40 p-6 rounded-2xl border border-white/10 backdrop-blur-md">
+            <div>
+                <span class="text-xs font-bold text-[#b91c1c] tracking-widest uppercase">Colección</span>
+                <h2 class="text-3xl font-extrabold text-white mt-1">Lo más buscado</h2>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="scrollCarousel(-300)" class="w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full flex items-center justify-center transition"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                <button onclick="scrollCarousel(300)" class="w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full flex items-center justify-center transition"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+            </div>
+        </div>
+
+        <div class="w-full overflow-hidden">
+            <div id="main-carousel" class="flex gap-6 px-4 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing pb-4" style="scroll-behavior: smooth;">
+                
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
+                    <div>
+                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
+                            <img src="Images/playeraverde.png" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            <img src="Images/playeraverdeatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0">
+                            
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+
+                            <button onclick="toggleFavorito(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-1 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">Playera 'Alcantarilla'</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$899 MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-1 z-20 relative">
+                            <button onclick="seleccionarTalla(1, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                            <button onclick="seleccionarTalla(1, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                            <button onclick="seleccionarTalla(1, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
+                            <button onclick="seleccionarTalla(1, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                            <button onclick="seleccionarTalla(1, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
+                </div>
+
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
+                    <div>
+                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
+                            <img src="Images/playeranegrechino.png" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            <img src="Images/playeranegrochinoatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+                            <button onclick="toggleFavorito(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-2 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">Hoodie 'Noche Urbana'</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$1,499 MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-2 z-20 relative">
+                            <button onclick="seleccionarTalla(2, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                            <button onclick="seleccionarTalla(2, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                            <button onclick="seleccionarTalla(2, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
+                            <button onclick="seleccionarTalla(2, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                            <button onclick="seleccionarTalla(2, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
+                </div>
+
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
+                    <div>
+                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
+                            <img src="Images/playeranegra2.png" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            <img src="Images/playeranegra2atras.png" class="object-cover w-full h-full absolute inset-0 opacity-0">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(3, 'Joggers Callejero', 1199, 'Images/playeranegra2.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+                            <button onclick="toggleFavorito(3, 'Joggers Callejero', 1199, 'Images/playeranegra2.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-3 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">Joggers Callejero</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$1,199 MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-3 z-20 relative">
+                            <button onclick="seleccionarTalla(3, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                            <button onclick="seleccionarTalla(3, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                            <button onclick="seleccionarTalla(3, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
+                            <button onclick="seleccionarTalla(3, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                            <button onclick="seleccionarTalla(3, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(3, 'Joggers Callejero', 1199, 'Images/playeranegra2.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
+                </div>
+
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
+                    <div>
+                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
+                            <img src="Images/playeracrema.png" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            <img src="Images/playeracremaatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(4, 'Chaqueta Rebel Tech', 2299, 'Images/playeracrema.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+                            <button onclick="toggleFavorito(4, 'Chaqueta Rebel Tech', 2299, 'Images/playeracrema.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-4 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">Chaqueta Rebel Tech</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$2,299 MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-4 z-20 relative">
+                            <button onclick="seleccionarTalla(4, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                            <button onclick="seleccionarTalla(4, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                            <button onclick="seleccionarTalla(4, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
+                            <button onclick="seleccionarTalla(4, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                            <button onclick="seleccionarTalla(4, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(4, 'Chaqueta Rebel Tech', 2299, 'Images/playeracrema.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
+                </div>
+
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
+                    <div>
+                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
+                            <img src="Images/playeraverde.png" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            <img src="Images/playeraverdeatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+                            <button onclick="toggleFavorito(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-1 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">Playera 'Alcantarilla'</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$899 MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-1 z-20 relative">
+                            <button onclick="seleccionarTalla(1, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                            <button onclick="seleccionarTalla(1, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                            <button onclick="seleccionarTalla(1, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
+                            <button onclick="seleccionarTalla(1, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                            <button onclick="seleccionarTalla(1, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
+                </div>
+                
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
+                    <div>
+                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
+                            <img src="Images/playeranegrechino.png" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            <img src="Images/playeranegrochinoatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0">
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+                            <button onclick="toggleFavorito(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-2 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">Hoodie 'Noche Urbana'</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$1,499 MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-2 z-20 relative">
+                            <button onclick="seleccionarTalla(2, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                            <button onclick="seleccionarTalla(2, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                            <button onclick="seleccionarTalla(2, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
+                            <button onclick="seleccionarTalla(2, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                            <button onclick="seleccionarTalla(2, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-7xl mx-auto px-4 py-16 mt-10 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-white/5 p-8 md:p-12 rounded-2xl border border-white/10 shadow-inner backdrop-blur-md">
+            <div>
+                <h2 class="text-3xl font-extrabold text-white">Forma parte del clan.</h2>
+                <p class="text-neutral-300 text-sm mt-2">Recibe 10% de descuento en tu primera compra y acceso exclusivo a drops.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="email" placeholder="tu@email.com" class="bg-black/50 border border-white/10 text-white rounded px-4 py-3 flex-1 focus:outline-none focus:border-[#b91c1c] text-sm shadow-inner">
+                <button class="bg-[#b91c1c] text-white font-bold px-6 py-3 rounded hover:bg-[#dc2626] transition flex items-center justify-center gap-2 text-sm shadow-lg">
+                    <svg class="w-4 h-4 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    Suscribir
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-20 bg-black/60 backdrop-blur-2xl relative z-10 pt-16 pb-8 border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-2">
+                <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-20 w-20 object-cover object-center mb-4 opacity-80 rounded-full grayscale hover:grayscale-0 transition duration-500 shadow-md border border-white/10">
+                <p class="text-neutral-400 text-sm max-w-sm leading-relaxed">Elevando el streetwear con calidad y diseño. La marca que define tu actitud. Hecho en México con visión global.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-white mb-4 text-sm uppercase tracking-widest">Síguenos</h3>
+                <ul class="space-y-3 text-neutral-400 text-xs font-semibold">
+                    <li><a href="#" class="hover:text-[#b91c1c] transition">Instagram</a></li>
+                    <li><a href="#" class="hover:text-[#b91c1c] transition">TikTok</a></li>
+                    <li><a href="#" class="hover:text-[#b91c1c] transition">X / Twitter</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold text-white mb-4 text-sm uppercase tracking-widest">Tienda & Ayuda</h3>
+                <ul class="space-y-3 text-neutral-400 text-xs font-semibold">
+                    <li><a href="#" class="hover:text-[#b91c1c] transition">Guía de Tallas</a></li>
+                    <li><a href="#" class="hover:text-[#b91c1c] transition">Envíos y Entregas</a></li>
+                    <li><a href="#" class="hover:text-[#b91c1c] transition">Devoluciones</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-xs text-neutral-500 font-medium">
+            <p>© 2026 ALCANTARILLA. Todos los derechos reservados.</p>
+            <div class="flex items-center space-x-3 mt-4 md:mt-0">
+                <span class="hover:text-neutral-300 cursor-pointer transition">Aviso de Privacidad</span>
+                <span>|</span>
+                <span class="hover:text-neutral-300 cursor-pointer transition">Términos de Uso</span>
+            </div>
+        </div>
+    </footer>
+
+    <div class="pest-container rat-path"><span class="rat-body">🐀</span></div>
+    <div class="pest-container roach-path"><span class="roach-body">🪳</span></div>
+
+    <div id="global-overlay" onclick="closeAllDrawers()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 pointer-events-none opacity-0 transition-opacity duration-300"></div>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-3xl z-50 transform translate-x-full drawer-transition flex flex-col items-center justify-center space-y-8 text-2xl font-black">
+        <button onclick="closeAllDrawers()" class="absolute top-6 right-6 text-neutral-400 hover:text-white p-2 border border-white/10 rounded-full"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        <a href="index.html" onclick="closeAllDrawers()" class="hover:text-[#b91c1c] transition uppercase tracking-widest text-white">Novedades</a>
+        <a href="Colecciones.html" onclick="closeAllDrawers()" class="hover:text-[#b91c1c] transition uppercase tracking-widest text-white">Colecciones</a>
+        <a href="#probador-ia" onclick="closeAllDrawers()" class="text-[#b91c1c] flex items-center gap-2 uppercase tracking-widest">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> 
+            Probador IA
+        </a>
+    </div>
+
+    <div id="quick-view-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeQuickView()"></div>
+        <div class="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="qv-content">
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 z-10 bg-black/50 p-2 rounded-full text-neutral-400 hover:text-white border border-white/10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <div class="w-full md:w-1/2 h-72 md:h-auto relative">
+                <img id="qv-img" src="" class="absolute inset-0 w-full h-full object-cover">
+            </div>
+            <div class="w-full md:w-1/2 p-8 md:p-10 flex flex-col justify-center bg-black/40">
+                <span class="text-[#b91c1c] text-xs font-black tracking-widest uppercase mb-2">Streetwear Premium</span>
+                <h2 id="qv-name" class="text-3xl font-black text-white uppercase mb-2"></h2>
+                <p id="qv-price" class="text-xl text-neutral-300 font-mono mb-6"></p>
+                <p class="text-sm text-neutral-400 mb-8 leading-relaxed">Diseño exclusivo de ALCANTARILLA. Prenda confeccionada con materiales de alto gramaje y durabilidad. Corte urbano oversize y estampado de alta densidad resistente al desgaste.</p>
+                
+                <div class="mb-8">
+                    <p class="text-xs text-white font-bold uppercase tracking-wider mb-3">Selecciona tu talla:</p>
+                    <div class="flex flex-wrap gap-2" id="qv-sizes">
+                        <button onclick="selectQVTalla('XS')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">XS</button>
+                        <button onclick="selectQVTalla('S')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">S</button>
+                        <button onclick="selectQVTalla('M')" class="qv-talla-btn w-10 h-10 bg-[#b91c1c] border border-[#b91c1c] text-xs font-bold rounded text-white transition talla-activa">M</button>
+                        <button onclick="selectQVTalla('G')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">G</button>
+                        <button onclick="selectQVTalla('XL')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">XL</button>
+                    </div>
+                </div>
+                
+                <button id="qv-add-btn" class="w-full bg-[#b91c1c] text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Añadir a mis elecciones</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-[#0a0a0a]/95 backdrop-blur-3xl border-l border-white/10 z-50 transform translate-x-full drawer-transition flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+            <h2 class="text-base font-bold uppercase tracking-wider text-white">🛍️ Mis Elecciones</h2>
+            <button onclick="closeAllDrawers()" class="text-neutral-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </div>
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
+        <div class="p-6 border-t border-white/10 bg-black/50 space-y-4">
+            <div class="flex justify-between items-center"><span class="text-neutral-400 text-xs uppercase">Subtotal estimado:</span><span id="cart-total" class="text-[#b91c1c] font-black text-xl">$0 MXN</span></div>
+            <button class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-lg uppercase tracking-widest text-[11px] hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <div id="fav-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-[#0a0a0a]/95 backdrop-blur-3xl border-l border-white/10 z-50 transform translate-x-full drawer-transition flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)]">
+        <div class="p-6 border-b border-white/10 flex items-center justify-between">
+            <h2 class="text-base font-bold uppercase tracking-wider text-white">❤️ Mis Favoritos</h2>
+            <button onclick="closeAllDrawers()" class="text-neutral-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        </div>
+        <div id="fav-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
+        <div class="p-6 border-t border-white/10 bg-black/50">
+            <p class="text-neutral-500 text-center text-xs uppercase font-mono tracking-wider">Tus favoritos se mantendrán guardados</p>
+        </div>
+    </div>
+
+    <script>
+        let carrito = JSON.parse(localStorage.getItem('alcantarillaCart')) || [];
+        let favoritos = JSON.parse(localStorage.getItem('alcantarillaFavs')) || []; 
+        let tallasSeleccionadas = {};
+        let qvActiveId = null;
+        let qvActiveTalla = 'M';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarInterfazCarrito();
+            actualizarInterfazFavoritos();
+            setTimeout(() => { document.body.classList.remove('opacity-0'); document.body.classList.add('opacity-100'); }, 50);
+            initCarousel();
+        });
+
+        /* --- MOTOR DE CARRUSEL CON SOPORTE MÓVIL (TOUCH) --- */
+        const carousel = document.getElementById('main-carousel');
+        let isDown = false, startX, scrollLeft, autoScrollInterval;
+
+        function getPositionX(e) {
+            return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
+        }
+
+        function startAutoScroll() {
+            autoScrollInterval = setInterval(() => {
+                if(!isDown && carousel) {
+                    carousel.scrollLeft += 1.5;
+                    if (carousel.scrollLeft >= carousel.scrollWidth / 2) carousel.scrollLeft = 0;
+                }
+            }, 20);
+        }
+        function stopAutoScroll() { clearInterval(autoScrollInterval); }
+
+        function dragStart(e) {
+            isDown = true;
+            carousel.classList.add('active:cursor-grabbing');
+            startX = getPositionX(e) - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+            stopAutoScroll();
+        }
+
+        function dragMove(e) {
+            if (!isDown) return;
+            const x = getPositionX(e) - carousel.offsetLeft;
+            const walk = (x - startX) * 2;
+            carousel.scrollLeft = scrollLeft - walk;
+        }
+
+        function dragEnd() {
+            isDown = false;
+            carousel.classList.remove('active:cursor-grabbing');
+            startAutoScroll();
+        }
+
+        function initCarousel() {
+            if(!carousel) return;
+            startAutoScroll();
+            // Mouse Events (PC)
+            carousel.addEventListener('mousedown', dragStart);
+            carousel.addEventListener('mousemove', dragMove);
+            carousel.addEventListener('mouseleave', dragEnd);
+            carousel.addEventListener('mouseup', dragEnd);
+            // Touch Events (Celulares/Tablets)
+            carousel.addEventListener('touchstart', dragStart, {passive: true});
+            carousel.addEventListener('touchmove', dragMove, {passive: true});
+            carousel.addEventListener('touchend', dragEnd);
+            
+            carousel.addEventListener('mouseenter', stopAutoScroll);
+        }
+        function scrollCarousel(dir) { if(carousel) carousel.scrollBy({ left: dir, behavior: 'smooth' }); }
+
+        /* --- NOTIFICACIONES TOASTS --- */
+        function showToast(title, message, isFav = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colorClass = isFav ? 'text-rose-500' : 'text-[#b91c1c]';
+            const icon = isFav ? '❤️' : '🛍️';
+            
+            toast.className = `bg-black/80 backdrop-blur-xl border border-white/10 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
+            toast.innerHTML = `
+                <div class="text-xl">${icon}</div>
+                <div>
+                    <h4 class="font-bold text-[11px] uppercase tracking-wider ${colorClass}">${title}</h4>
+                    <p class="text-xs text-neutral-300 mt-0.5">${message}</p>
+                </div>
+            `;
+            container.appendChild(toast);
+            
+            setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* --- VISTA RÁPIDA (MODAL) --- */
+        function openQuickView(id, name, price, img) {
+            qvActiveId = id;
+            qvActiveTalla = tallasSeleccionadas[id] || 'M';
+            document.getElementById('qv-img').src = img;
+            document.getElementById('qv-name').innerText = name;
+            document.getElementById('qv-price').innerText = `$${price.toLocaleString('es-MX')} MXN`;
+            
+            selectQVTalla(qvActiveTalla); 
+            
+            const btnAdd = document.getElementById('qv-add-btn');
+            btnAdd.onclick = () => {
+                agregarAlCarritoConTallaDirecto(id, name, price, img, qvActiveTalla);
+                closeQuickView();
+            };
+
+            const modal = document.getElementById('quick-view-modal');
+            const content = document.getElementById('qv-content');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeQuickView() {
+            const content = document.getElementById('qv-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                document.getElementById('quick-view-modal').classList.add('hidden');
+                document.getElementById('quick-view-modal').classList.remove('flex');
+            }, 300);
+        }
+
+        function selectQVTalla(talla) {
+            qvActiveTalla = talla;
+            seleccionarTalla(qvActiveId, talla); 
+            document.querySelectorAll('.qv-talla-btn').forEach(btn => {
+                if(btn.innerText === talla) {
+                    btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
+                    btn.classList.remove('bg-white/5', 'border-white/10');
+                } else {
+                    btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
+                    btn.classList.add('bg-white/5', 'border-white/10');
+                }
+            });
+        }
+
+        /* --- FAVORITOS --- */
+        function toggleFavorito(id, nombre, precio, imagen) {
+            const index = favoritos.findIndex(item => item.id === id);
+            if (index > -1) { 
+                favoritos.splice(index, 1); 
+                showToast('Favoritos', `Eliminaste ${nombre}`, true);
+            } else { 
+                favoritos.push({ id, nombre, precio, imagen }); 
+                showToast('Favoritos', `Guardaste ${nombre}`, true);
+            }
+            localStorage.setItem('alcantarillaFavs', JSON.stringify(favoritos));
+            actualizarInterfazFavoritos();
+        }
+
+        function borrarFavoritoDirecto(id) {
+            favoritos = favoritos.filter(item => item.id !== id);
+            localStorage.setItem('alcantarillaFavs', JSON.stringify(favoritos));
+            actualizarInterfazFavoritos();
+        }
+
+        function actualizarInterfazFavoritos() {
+            document.getElementById('fav-count').innerText = favoritos.length;
+            const container = document.getElementById('fav-items-container');
+            if (favoritos.length === 0) { 
+                container.innerHTML = `<p class="text-xs text-neutral-500 text-center uppercase font-mono py-12">No tienes favoritos aún</p>`; 
+            } else {
+                container.innerHTML = favoritos.map(item => `
+                    <div class="flex items-center gap-4 bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10">
+                        <img src="${item.imagen}" class="w-12 h-16 object-cover rounded bg-black/50">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-xs font-bold text-white uppercase truncate">${item.nombre}</h4>
+                            <p class="text-xs text-[#b91c1c] font-mono mt-0.5">$${item.precio.toLocaleString('es-MX')} MXN</p>
+                            <button onclick="moverFavoritoAlCarrito(${item.id}, '${item.nombre}', ${item.precio}, '${item.imagen}')" class="text-[10px] text-neutral-300 underline mt-1 block uppercase font-bold hover:text-[#b91c1c] transition">Mover al Carrito</button>
+                        </div>
+                        <button onclick="borrarFavoritoDirecto(${item.id})" class="text-neutral-500 hover:text-rose-500 p-2 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-14v4m-4-4h4m1 0H4"></path></svg>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            const idsGuardados = favoritos.map(f => f.id);
+            for(let id = 1; id <= 4; id++) {
+                document.querySelectorAll(`.heart-icon-prod-${id}`).forEach(icon => {
+                    if (idsGuardados.includes(id)) {
+                        icon.classList.remove('text-neutral-300', 'fill-none'); 
+                        icon.classList.add('text-rose-500', 'fill-rose-500', 'scale-110');
+                    } else {
+                        icon.classList.remove('text-rose-500', 'fill-rose-500', 'scale-110'); 
+                        icon.classList.add('text-neutral-300', 'fill-none');
+                    }
+                });
+            }
+        }
+
+        function moverFavoritoAlCarrito(id, nombre, precio, imagen) {
+            agregarAlCarritoConTalla(id, nombre, precio, imagen);
+            borrarFavoritoDirecto(id);
+        }
+
+        /* --- CONTROL DE PANELES --- */
+        function toggleDrawerGeneric(id) {
+            const drawer = document.getElementById(id);
+            const overlay = document.getElementById('global-overlay');
+            
+            document.querySelectorAll('.drawer-transition').forEach(d => {
+                if(d.id !== id && d.id !== 'qv-content') {
+                    d.classList.add(d.id === 'filter-drawer' ? '-translate-x-full' : 'translate-x-full');
+                }
+            });
+            
+            if (drawer.classList.contains('translate-x-full') || drawer.classList.contains('-translate-x-full')) {
+                drawer.classList.remove('translate-x-full', '-translate-x-full');
+                overlay.classList.remove('pointer-events-none', 'opacity-0'); 
+                overlay.classList.add('opacity-100');
+            } else { closeAllDrawers(); }
+        }
+
+        function toggleCartDrawer() { toggleDrawerGeneric('cart-drawer'); }
+        function toggleFavDrawer() { toggleDrawerGeneric('fav-drawer'); }
+        function toggleMobileMenu() { toggleDrawerGeneric('mobile-menu'); }
+        
+        function closeAllDrawers() {
+            document.getElementById('cart-drawer').classList.add('translate-x-full');
+            document.getElementById('fav-drawer').classList.add('translate-x-full');
+            document.getElementById('mobile-menu').classList.add('translate-x-full');
+            const overlay = document.getElementById('global-overlay');
+            overlay.classList.add('pointer-events-none', 'opacity-0'); 
+            overlay.classList.remove('opacity-100');
+        }
+
+        /* --- CARRITO Y TALLAS --- */
+        function seleccionarTalla(productoId, talla) {
+            tallasSeleccionadas[productoId] = talla;
+            document.querySelectorAll(`.t-container-${productoId}`).forEach(contenedor => {
+                const botones = contenedor.getElementsByTagName('button');
+                for (let btn of botones) { 
+                    if(btn.innerText === talla) {
+                        btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
+                        btn.classList.remove('bg-white/5', 'border-white/10');
+                    } else {
+                        btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
+                        btn.classList.add('bg-white/5', 'border-white/10');
+                    }
+                }
+            });
+        }
+
+        function agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, tallaSelect) {
+            const itemUniqueId = `${id}-${tallaSelect}`;
+            const productoExistente = carrito.find(item => item.uniqueId === itemUniqueId);
+            if (productoExistente) { productoExistente.amount += 1; } 
+            else { carrito.push({ uniqueId: itemUniqueId, id, nombre: `${nombre} (${tallaSelect})`, precio, imagen, amount: 1 }); }
+            
+            localStorage.setItem('alcantarillaCart', JSON.stringify(carrito));
+            actualizarInterfazCarrito();
+            showToast('Carrito', `Añadiste 1x ${nombre} [${tallaSelect}]`);
+        }
+
+        function agregarAlCarritoConTalla(id, nombre, precio, imagen) {
+            const talla = tallasSeleccionadas[id] || 'M';
+            agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, talla);
+        }
+
+        function cambiarCantidad(uniqueId, cambio) {
+            const producto = carrito.find(item => item.uniqueId === uniqueId);
+            if (!producto) return;
+            producto.amount += cambio;
+            if (producto.amount <= 0) { eliminarDelCarrito(uniqueId); return; }
+            localStorage.setItem('alcantarillaCart', JSON.stringify(carrito));
+            actualizarInterfazCarrito();
+        }
+
+        function eliminarDelCarrito(uniqueId) {
+            carrito = carrito.filter(item => item.uniqueId !== uniqueId);
+            localStorage.setItem('alcantarillaCart', JSON.stringify(carrito));
+            actualizarInterfazCarrito();
+        }
+
+        function actualizarInterfazCarrito() {
+            const container = document.getElementById('cart-items-container');
+            document.getElementById('cart-count').innerText = carrito.reduce((ac, item) => ac + item.amount, 0);
+            const totalDinero = carrito.reduce((ac, item) => ac + (item.precio * item.amount), 0);
+            document.getElementById('cart-total').innerText = `$${totalDinero.toLocaleString('es-MX')} MXN`;
+
+            if (carrito.length === 0) {
+                container.innerHTML = `<p class="text-xs text-neutral-500 text-center uppercase font-mono py-12">El clóset está vacío</p>`; return;
+            }
+            container.innerHTML = carrito.map(item => `
+                <div class="flex items-center gap-4 bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10 relative shadow-inner">
+                    <img src="${item.imagen}" class="w-12 h-16 object-cover rounded bg-black/50">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-xs font-bold text-white uppercase truncate">${item.nombre}</h4>
+                        <p class="text-xs text-[#b91c1c] font-mono mt-0.5">$${(item.precio * item.amount).toLocaleString('es-MX')} MXN</p>
+                        <div class="flex items-center gap-1.5 mt-2.5">
+                            <button onclick="cambiarCantidad('${item.uniqueId}', -1)" class="w-6 h-6 bg-white/10 hover:bg-white/20 text-neutral-300 hover:text-white rounded-md flex items-center justify-center font-mono text-xs transition border border-white/10">-</button>
+                            <span class="text-xs font-bold font-mono w-5 text-center text-white">${item.amount}</span>
+                            <button onclick="cambiarCantidad('${item.uniqueId}', 1)" class="w-6 h-6 bg-white/10 hover:bg-white/20 text-neutral-300 hover:text-white rounded-md flex items-center justify-center font-mono text-xs transition border border-white/10">+</button>
+                        </div>
+                    </div>
+                    <button onclick="eliminarDelCarrito('${item.uniqueId}')" class="text-neutral-500 hover:text-rose-500 p-2 transition absolute top-2 right-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-14v4m-4-4h4m1 0H4"></path></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
