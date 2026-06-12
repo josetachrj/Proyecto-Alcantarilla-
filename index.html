@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALCANTARILLA - Streetwear & AI Try-On</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { 
@@ -25,60 +23,32 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        .talla-activa {
-            background-color: #b91c1c !important;
-            color: #ffffff !important;
-            border-color: #b91c1c !important;
+        .talla-activa { background-color: #b91c1c !important; color: #ffffff !important; border-color: #b91c1c !important; }
+        
+        .group\/img img { transition: transform 0.7s cubic-bezier(0.15, 0.85, 0.45, 1), opacity 0.5s ease-in-out; }
+        @media (hover: none) {
+            .group\/img:focus > div { opacity: 1 !important; }
+            .group\/img:focus > img:nth-child(2) { opacity: 1 !important; }
         }
 
-        .group\/img img {
-            transition: transform 0.7s cubic-bezier(0.15, 0.85, 0.45, 1), opacity 0.5s ease-in-out;
-        }
-
-        /* --- PLAGAS EASTER EGGS --- */
         .pest-container { position: fixed; font-size: 55px; z-index: 9999; pointer-events: none; color: transparent; text-shadow: 0 0 0 #050505; opacity: 0.85; }
         .rat-path { top: 0; left: 0; animation: pathRat 35s linear infinite; }
         .roach-path { top: 0; left: 0; animation: pathRoach 25s linear infinite; }
         .rat-body { display: inline-block; animation: ratScurry 0.12s infinite alternate; }
         .roach-body { display: inline-block; animation: roachJitter 0.05s infinite alternate; }
 
-        @keyframes pathRat {
-            0% { transform: translate(-10vw, 85vh) scaleX(-1); opacity: 1; }
-            15% { transform: translate(110vw, 85vh) scaleX(-1); opacity: 1; }
-            15.1% { opacity: 0; }
-            45% { opacity: 0; transform: translate(110vw, 15vh) scaleX(1); }
-            45.1% { opacity: 1; transform: translate(110vw, 15vh) scaleX(1); }
-            60% { transform: translate(-10vw, 15vh) scaleX(1); opacity: 1; }
-            60.1% { opacity: 0; }
-            100% { opacity: 0; }
-        }
-
-        @keyframes pathRoach {
-            0% { opacity: 0; transform: translate(20vw, -10vh) rotate(180deg); }
-            5% { opacity: 1; }
-            20% { transform: translate(20vw, 110vh) rotate(180deg); opacity: 1; }
-            20.1% { opacity: 0; }
-            50% { opacity: 0; transform: translate(75vw, 110vh) rotate(0deg); }
-            55% { opacity: 1; transform: translate(75vw, 110vh) rotate(0deg); }
-            70% { transform: translate(75vw, -10vh) rotate(0deg); opacity: 1; }
-            70.1% { opacity: 0; }
-            100% { opacity: 0; }
-        }
-
+        @keyframes pathRat { 0% { transform: translate(-10vw, 85vh) scaleX(-1); opacity: 1; } 15% { transform: translate(110vw, 85vh) scaleX(-1); opacity: 1; } 15.1% { opacity: 0; } 45% { opacity: 0; transform: translate(110vw, 15vh) scaleX(1); } 45.1% { opacity: 1; transform: translate(110vw, 15vh) scaleX(1); } 60% { transform: translate(-10vw, 15vh) scaleX(1); opacity: 1; } 60.1% { opacity: 0; } 100% { opacity: 0; } }
+        @keyframes pathRoach { 0% { opacity: 0; transform: translate(20vw, -10vh) rotate(180deg); } 5% { opacity: 1; } 20% { transform: translate(20vw, 110vh) rotate(180deg); opacity: 1; } 20.1% { opacity: 0; } 50% { opacity: 0; transform: translate(75vw, 110vh) rotate(0deg); } 55% { opacity: 1; transform: translate(75vw, 110vh) rotate(0deg); } 70% { transform: translate(75vw, -10vh) rotate(0deg); opacity: 1; } 70.1% { opacity: 0; } 100% { opacity: 0; } }
         @keyframes ratScurry { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-5px) rotate(4deg); } }
         @keyframes roachJitter { 0% { transform: translateX(0) rotate(-3deg); } 100% { transform: translateX(-2px) rotate(3deg); } }
     </style>
 </head>
 <body class="relative min-h-screen opacity-0 transition-opacity duration-700 ease-out">
 
-    <!-- 1. NAVBAR -->
     <header class="border-b border-white/10 bg-black/40 backdrop-blur-2xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
             <div class="flex items-center gap-4 flex-shrink-0">
-                <a href="index.html" class="block">
-                    <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-20 w-20 object-cover object-center rounded-full shadow-[0_0_15px_rgba(0,0,0,0.6)] border border-white/10">
-                </a>
-                
+                <a href="index.html" class="block"><img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-20 w-20 object-cover object-center rounded-full shadow-[0_0_15px_rgba(0,0,0,0.6)] border border-white/10"></a>
             </div>
 
             <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-neutral-300 bg-white/5 px-6 py-2 rounded-full border border-white/10 shadow-inner backdrop-blur-md">
@@ -95,6 +65,11 @@
                     <svg class="w-5 h-5 text-rose-500 fill-rose-500" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                     <span id="fav-count" class="absolute -top-1 -right-1 bg-white text-black text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center">0</span>
                 </button>
+                
+                <a href="login.html" title="Mi Cuenta" class="relative cursor-pointer hover:text-white transition bg-white/5 p-2.5 rounded-full border border-white/10 hover:bg-white/10 backdrop-blur-md flex items-center justify-center">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </a>
+                
                 <button onclick="toggleCartDrawer()" class="relative cursor-pointer hover:text-white transition bg-white/5 p-2.5 rounded-full border border-white/10 hover:bg-white/10 backdrop-blur-md">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-[#b91c1c] text-white text-[10px] font-black rounded-full w-4 h-4 flex items-center justify-center animate-pulse">0</span>
@@ -106,7 +81,6 @@
         </div>
     </header>
 
-    <!-- 2. HERO SECTION -->
     <section class="max-w-7xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-center mt-4">
         <div class="space-y-6 bg-black/40 p-6 md:p-10 rounded-3xl border border-white/10 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
             <span class="text-xs font-bold tracking-widest text-[#b91c1c] uppercase">Nueva Temporada 2026</span>
@@ -127,7 +101,6 @@
         </div>
     </section>
 
-    <!-- 3. PROBADOR IA -->
     <section id="probador-ia" class="max-w-7xl mx-auto px-4 py-16 mt-10 bg-black/40 border border-white/10 rounded-3xl backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
         <div class="mb-10 text-center md:text-left">
             <span class="text-xs font-bold text-[#b91c1c] tracking-widest uppercase">Tecnología Inteligente</span>
@@ -179,195 +152,24 @@
         </div>
     </section>
 
-    <!-- 4. CARRUSEL ARRASTRABLE (AHORA OPTIMIZADO PARA MÓVILES) -->
     <section id="productos-seccion" class="w-full py-20 mt-10 bg-black/30 border-y border-white/10 relative backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-end mb-8 bg-black/40 p-6 rounded-2xl border border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.3)] backdrop-blur-md">
             <div>
                 <span class="text-xs font-bold text-[#b91c1c] tracking-widest uppercase">Colección</span>
                 <h2 class="text-3xl font-extrabold text-white mt-1">Lo más buscado</h2>
             </div>
-            
             <div class="flex gap-2">
-                <button onclick="scrollCarousel(-300)" class="w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full flex items-center justify-center transition backdrop-blur-md">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <button onclick="scrollCarousel(300)" class="w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full flex items-center justify-center transition backdrop-blur-md">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
+                <button onclick="scrollCarousel(-300)" class="w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full flex items-center justify-center transition backdrop-blur-md"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                <button onclick="scrollCarousel(300)" class="w-10 h-10 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full flex items-center justify-center transition backdrop-blur-md"><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
             </div>
         </div>
 
         <div class="w-full overflow-hidden">
-            <!-- AQUÍ REMOVIMOS scroll-behavior: smooth; para que no haya LAG al arrastrar -->
             <div id="main-carousel" class="flex gap-6 px-4 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing pb-4">
-                
-                <!-- PRODUCTO 1 -->
-                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
-                    <div>
-                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
-                            <img src="Images/playeraverde.png" class="object-cover w-full h-full absolute inset-0 group-hover/img:opacity-0 group-hover/img:scale-105 opacity-90">
-                            <img src="Images/playeraverdeatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0 group-hover/img:opacity-100 group-hover/img:scale-105">
-                            
-                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
-                            </div>
-
-                            <button onclick="toggleFavorito(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md">
-                                <svg class="heart-icon-prod-1 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            </button>
-                        </div>
-                        <h3 class="text-white font-semibold text-sm truncate">Playera 'Alcantarilla'</h3>
-                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$899 MXN</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-1 z-20 relative">
-                            <button onclick="seleccionarTalla(1, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                            <button onclick="seleccionarTalla(1, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                            <button onclick="seleccionarTalla(1, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
-                            <button onclick="seleccionarTalla(1, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                            <button onclick="seleccionarTalla(1, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                        </div>
-                    </div>
-                    <button onclick="agregarAlCarritoConTalla(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
                 </div>
-
-                <!-- PRODUCTO 2 -->
-                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
-                    <div>
-                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
-                            <img src="Images/playeranegrechino.png" class="object-cover w-full h-full absolute inset-0 group-hover/img:opacity-0 group-hover/img:scale-105 opacity-90">
-                            <img src="Images/playeranegrochinoatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0 group-hover/img:opacity-100 group-hover/img:scale-105">
-                            
-                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
-                            </div>
-
-                            <button onclick="toggleFavorito(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md">
-                                <svg class="heart-icon-prod-2 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            </button>
-                        </div>
-                        <h3 class="text-white font-semibold text-sm truncate">Hoodie 'Noche Urbana'</h3>
-                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$1,499 MXN</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-2 z-20 relative">
-                            <button onclick="seleccionarTalla(2, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                            <button onclick="seleccionarTalla(2, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                            <button onclick="seleccionarTalla(2, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
-                            <button onclick="seleccionarTalla(2, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                            <button onclick="seleccionarTalla(2, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                        </div>
-                    </div>
-                    <button onclick="agregarAlCarritoConTalla(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
-                </div>
-
-                <!-- PRODUCTO 3 -->
-                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
-                    <div>
-                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
-                            <img src="Images/playeranegra2.png" class="object-cover w-full h-full absolute inset-0 group-hover/img:opacity-0 group-hover/img:scale-105 opacity-90">
-                            <img src="Images/playeranegra2atras.png" class="object-cover w-full h-full absolute inset-0 opacity-0 group-hover/img:opacity-100 group-hover/img:scale-105">
-                            
-                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(3, 'Joggers Callejero', 1199, 'Images/playeranegra2.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
-                            </div>
-
-                            <button onclick="toggleFavorito(3, 'Joggers Callejero', 1199, 'Images/playeranegra2.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md">
-                                <svg class="heart-icon-prod-3 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            </button>
-                        </div>
-                        <h3 class="text-white font-semibold text-sm truncate">Joggers 'Callejero'</h3>
-                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$1,199 MXN</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-3 z-20 relative">
-                            <button onclick="seleccionarTalla(3, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                            <button onclick="seleccionarTalla(3, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                            <button onclick="seleccionarTalla(3, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
-                            <button onclick="seleccionarTalla(3, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                            <button onclick="seleccionarTalla(3, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                        </div>
-                    </div>
-                    <button onclick="agregarAlCarritoConTalla(3, 'Joggers Callejero', 1199, 'Images/playeranegra2.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
-                </div>
-
-                <!-- PRODUCTO 4 -->
-                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
-                    <div>
-                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
-                            <img src="Images/playeracrema.png" class="object-cover w-full h-full absolute inset-0 group-hover/img:opacity-0 group-hover/img:scale-105 opacity-90">
-                            <img src="Images/playeracremaatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0 group-hover/img:opacity-100 group-hover/img:scale-105">
-                            
-                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(4, 'Chaqueta Rebel Tech', 2299, 'Images/playeracrema.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
-                            </div>
-
-                            <button onclick="toggleFavorito(4, 'Chaqueta Rebel Tech', 2299, 'Images/playeracrema.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md">
-                                <svg class="heart-icon-prod-4 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            </button>
-                        </div>
-                        <h3 class="text-white font-semibold text-sm truncate">Chaqueta Rebel Tech</h3>
-                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$2,299 MXN</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-4 z-20 relative">
-                            <button onclick="seleccionarTalla(4, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                            <button onclick="seleccionarTalla(4, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                            <button onclick="seleccionarTalla(4, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
-                            <button onclick="seleccionarTalla(4, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                            <button onclick="seleccionarTalla(4, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                        </div>
-                    </div>
-                    <button onclick="agregarAlCarritoConTalla(4, 'Chaqueta Rebel Tech', 2299, 'Images/playeracrema.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
-                </div>
-
-                <!-- CLONES PARA EL EFECTO INFINITO -->
-                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
-                    <div>
-                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
-                            <img src="Images/playeraverde.png" class="object-cover w-full h-full absolute inset-0 group-hover/img:opacity-0 group-hover/img:scale-105 opacity-90">
-                            <img src="Images/playeraverdeatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0 group-hover/img:opacity-100 group-hover/img:scale-105">
-                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
-                            </div>
-                            <button onclick="toggleFavorito(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md">
-                                <svg class="heart-icon-prod-1 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            </button>
-                        </div>
-                        <h3 class="text-white font-semibold text-sm truncate">Playera 'Alcantarilla'</h3>
-                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$899 MXN</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-1 z-20 relative">
-                            <button onclick="seleccionarTalla(1, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                            <button onclick="seleccionarTalla(1, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                            <button onclick="seleccionarTalla(1, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
-                            <button onclick="seleccionarTalla(1, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                            <button onclick="seleccionarTalla(1, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                        </div>
-                    </div>
-                    <button onclick="agregarAlCarritoConTalla(1, 'Playera Alcantarilla', 899, 'Images/playeraverde.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
-                </div>
-                
-                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg">
-                    <div>
-                        <div class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img">
-                            <img src="Images/playeranegrechino.png" class="object-cover w-full h-full absolute inset-0 group-hover/img:opacity-0 group-hover/img:scale-105 opacity-90">
-                            <img src="Images/playeranegrochinoatras.png" class="object-cover w-full h-full absolute inset-0 opacity-0 group-hover/img:opacity-100 group-hover/img:scale-105">
-                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
-                            </div>
-                            <button onclick="toggleFavorito(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md">
-                                <svg class="heart-icon-prod-2 w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                            </button>
-                        </div>
-                        <h3 class="text-white font-semibold text-sm truncate">Hoodie 'Noche Urbana'</h3>
-                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$1,499 MXN</p>
-                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-2 z-20 relative">
-                            <button onclick="seleccionarTalla(2, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                            <button onclick="seleccionarTalla(2, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                            <button onclick="seleccionarTalla(2, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white talla-activa transition">M</button>
-                            <button onclick="seleccionarTalla(2, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                            <button onclick="seleccionarTalla(2, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                        </div>
-                    </div>
-                    <button onclick="agregarAlCarritoConTalla(2, 'Hoodie Noche Urbana', 1499, 'Images/playeranegrechino.png')" class="w-full bg-white text-black font-bold py-2 rounded text-[11px] uppercase tracking-wider hover:bg-[#b91c1c] hover:text-white transition duration-300 z-20 relative">Agregar al Carrito</button>
-                </div>
-            </div>
         </div>
     </section>
 
-    <!-- 5. NEWSLETTER Y FOOTER -->
     <section class="max-w-7xl mx-auto px-4 py-16 mt-10 bg-black/40 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center bg-white/5 p-8 md:p-12 rounded-2xl border border-white/10 shadow-inner backdrop-blur-md">
             <div>
@@ -377,14 +179,12 @@
             <div class="flex flex-col sm:flex-row gap-3">
                 <input type="email" placeholder="tu@email.com" class="bg-black/50 border border-white/10 text-white rounded px-4 py-3 flex-1 focus:outline-none focus:border-[#b91c1c] text-sm shadow-inner">
                 <button class="bg-[#b91c1c] text-white font-bold px-6 py-3 rounded hover:bg-[#dc2626] transition flex items-center justify-center gap-2 text-sm shadow-lg">
-                    <svg class="w-4 h-4 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-                    Suscribir
+                    <svg class="w-4 h-4 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg> Suscribir
                 </button>
             </div>
         </div>
     </section>
 
-    <!-- 6. FOOTER -->
     <footer class="mt-20 bg-black/60 backdrop-blur-2xl relative z-10 pt-16 pb-8 border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-16">
             <div class="col-span-1 md:col-span-2">
@@ -418,19 +218,13 @@
         </div>
     </footer>
 
-    <!-- EASTER EGGS -->
     <div class="pest-container rat-path"><span class="rat-body">🐀</span></div>
     <div class="pest-container roach-path"><span class="roach-body">🪳</span></div>
 
-    <!-- ========================================== -->
-    <!-- OVERLAYS, DRAWERS Y MODALES -->
-    <!-- ========================================== -->
     <div id="global-overlay" onclick="closeAllDrawers()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 pointer-events-none opacity-0 transition-opacity duration-300"></div>
 
-    <!-- Menú Móvil -->
     <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-3xl z-50 transform translate-x-full drawer-transition flex flex-col items-center justify-center space-y-8 text-2xl font-black">
         <button onclick="closeAllDrawers()" class="absolute top-6 right-6 text-neutral-400 hover:text-white p-2 border border-white/10 rounded-full"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-        <!-- Al hacer clic se cierra el menú automáticamente -->
         <a href="index.html" onclick="closeAllDrawers()" class="hover:text-[#b91c1c] transition uppercase tracking-widest text-white">Novedades</a>
         <a href="Colecciones.html" onclick="closeAllDrawers()" class="hover:text-[#b91c1c] transition uppercase tracking-widest text-white">Colecciones</a>
         <a href="#probador-ia" onclick="closeAllDrawers()" class="text-[#b91c1c] flex items-center gap-2 uppercase tracking-widest">
@@ -439,37 +233,29 @@
         </a>
     </div>
 
-    <!-- Modal Vista Rápida -->
     <div id="quick-view-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeQuickView()"></div>
-        <div class="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="qv-content">
-            <button onclick="closeQuickView()" class="absolute top-4 right-4 z-10 bg-black/50 p-2 rounded-full text-neutral-400 hover:text-white border border-white/10"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            <div class="w-full md:w-1/2 h-72 md:h-auto relative">
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeQuickView()"></div>
+        <div class="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden transform scale-95 opacity-0 transition-all duration-300 max-h-[85vh] md:max-h-none" id="qv-content">
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 z-50 bg-black/70 p-2.5 rounded-full text-neutral-400 hover:text-white border border-white/10 backdrop-blur-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <div class="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative shrink-0">
                 <img id="qv-img" src="" class="absolute inset-0 w-full h-full object-cover">
             </div>
-            <div class="w-full md:w-1/2 p-8 md:p-10 flex flex-col justify-center bg-black/40">
+            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center bg-black/40 overflow-y-auto no-scrollbar">
                 <span class="text-[#b91c1c] text-xs font-black tracking-widest uppercase mb-2">Streetwear Premium</span>
-                <h2 id="qv-name" class="text-3xl font-black text-white uppercase mb-2"></h2>
-                <p id="qv-price" class="text-xl text-neutral-300 font-mono mb-6"></p>
-                <p class="text-sm text-neutral-400 mb-8 leading-relaxed">Diseño exclusivo de ALCANTARILLA. Prenda confeccionada con materiales de alto gramaje y durabilidad. Corte urbano oversize y estampado de alta densidad resistente al desgaste.</p>
+                <h2 id="qv-name" class="text-2xl md:text-3xl font-black text-white uppercase mb-2"></h2>
+                <p id="qv-price" class="text-xl text-neutral-300 font-mono mb-4"></p>
+                <p class="text-xs md:text-sm text-neutral-400 mb-6 leading-relaxed">Diseño exclusivo de ALCANTARILLA. Prenda confeccionada con materiales de alto gramaje y durabilidad. Corte urbano oversize y estampado de alta densidad resistente al desgaste.</p>
                 
-                <div class="mb-8">
-                    <p class="text-xs text-white font-bold uppercase tracking-wider mb-3">Selecciona tu talla:</p>
+                <div class="mb-6">
+                    <p class="text-xs text-white font-bold uppercase tracking-wider mb-2">Tallas Disponibles:</p>
                     <div class="flex flex-wrap gap-2" id="qv-sizes">
-                        <button onclick="selectQVTalla('XS')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">XS</button>
-                        <button onclick="selectQVTalla('S')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">S</button>
-                        <button onclick="selectQVTalla('M')" class="qv-talla-btn w-10 h-10 bg-[#b91c1c] border border-[#b91c1c] text-xs font-bold rounded text-white transition talla-activa">M</button>
-                        <button onclick="selectQVTalla('G')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">G</button>
-                        <button onclick="selectQVTalla('XL')" class="qv-talla-btn w-10 h-10 bg-white/5 border border-white/10 text-xs font-bold rounded text-white hover:bg-white/20 transition">XL</button>
-                    </div>
+                        </div>
                 </div>
-                
-                <button id="qv-add-btn" class="w-full bg-[#b91c1c] text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Añadir a mis elecciones</button>
+                <button id="qv-add-btn" class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Añadir a mis elecciones</button>
             </div>
         </div>
     </div>
 
-    <!-- Contenedor Toasts -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
     <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-[#0a0a0a]/95 backdrop-blur-3xl border-l border-white/10 z-50 transform translate-x-full drawer-transition flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)]">
@@ -480,7 +266,7 @@
         <div id="cart-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
         <div class="p-6 border-t border-white/10 bg-black/50 space-y-4">
             <div class="flex justify-between items-center"><span class="text-neutral-400 text-xs uppercase">Subtotal estimado:</span><span id="cart-total" class="text-[#b91c1c] font-black text-xl">$0 MXN</span></div>
-            <button class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-lg uppercase tracking-widest text-[11px] hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Proceder al Pago</button>
+            <button onclick="window.location.href='checkout.html'" class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-lg uppercase tracking-widest text-[11px] hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Proceder al Pago</button>
         </div>
     </div>
 
@@ -495,10 +281,20 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- LÓGICA JAVASCRIPT -->
-    <!-- ========================================== -->
     <script>
+        // Cargar Catálogo Base (Si está vacío, usa el default)
+        const catalogoDefault = [
+            { id: 1, nombre: "Playera Alcantarilla", precio: 899, imagen: "Images/playeraverde.png", stock: { XS: 5, S: 10, M: 15, G: 10, XL: 2 } },
+            { id: 2, nombre: "Hoodie Noche Urbana", precio: 1499, imagen: "Images/playeranegrechino.png", stock: { XS: 2, S: 5, M: 8, G: 5, XL: 1 } },
+            { id: 3, nombre: "Joggers Callejero", precio: 1199, imagen: "Images/playeranegra2.png", stock: { XS: 10, S: 15, M: 20, G: 15, XL: 5 } },
+            { id: 4, nombre: "Chaqueta Rebel Tech", precio: 2299, imagen: "Images/playeracrema.png", stock: { XS: 0, S: 3, M: 5, G: 2, XL: 0 } }
+        ];
+
+        let catalogo = JSON.parse(localStorage.getItem('alcantarillaCatalogo')) || catalogoDefault;
+        // Rescatar fallos de BD vieja
+        catalogo = catalogo.map(p => { if (!p.stock) p.stock = { XS: 10, S: 10, M: 10, G: 10, XL: 10 }; return p; });
+        localStorage.setItem('alcantarillaCatalogo', JSON.stringify(catalogo));
+
         let carrito = JSON.parse(localStorage.getItem('alcantarillaCart')) || [];
         let favoritos = JSON.parse(localStorage.getItem('alcantarillaFavs')) || []; 
         let tallasSeleccionadas = {};
@@ -506,13 +302,69 @@
         let qvActiveTalla = 'M';
 
         document.addEventListener('DOMContentLoaded', () => {
+            renderProductosIndex(); // <-- ESTA ES LA MAGIA DINÁMICA
             actualizarInterfazCarrito();
             actualizarInterfazFavoritos();
             setTimeout(() => { document.body.classList.remove('opacity-0'); document.body.classList.add('opacity-100'); }, 50);
             initCarousel();
         });
 
-        /* --- MOTOR DE CARRUSEL CON SOPORTE MÓVIL (NATIVO/SWIPE) --- */
+        /* --- RENDER DINÁMICO DE PRODUCTOS --- */
+        function renderProductosIndex() {
+            const container = document.getElementById('main-carousel');
+            if(!container) return;
+
+            let html = '';
+            // Para el efecto de carrusel infinito, pintamos el catálogo 2 veces seguidas
+            const displayCatalog = [...catalogo, ...catalogo];
+
+            displayCatalog.forEach((prod) => {
+                // Calcular stock total de la prenda
+                const stockTotal = prod.stock.XS + prod.stock.S + prod.stock.M + prod.stock.G + prod.stock.XL;
+                const isAgotado = stockTotal === 0;
+                
+                const btnText = isAgotado ? "Agotado" : "Agregar al Carrito";
+                const btnClass = isAgotado ? "bg-neutral-800 text-neutral-500 cursor-not-allowed border border-white/10" : "bg-white text-black hover:bg-[#b91c1c] hover:text-white";
+                const disabledAttr = isAgotado ? "disabled" : "";
+
+                // Generar los botones de talla revisando si hay stock
+                const btnXS = `<button onclick="seleccionarTalla(${prod.id}, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XS === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XS === 0 ? 'disabled' : ''}>XS</button>`;
+                const btnS = `<button onclick="seleccionarTalla(${prod.id}, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.S === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.S === 0 ? 'disabled' : ''}>S</button>`;
+                
+                // M se selecciona por defecto si hay, si no, se muestra normal pero sin ser 'talla-activa'
+                const btnM = `<button onclick="seleccionarTalla(${prod.id}, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white transition ${prod.stock.M === 0 ? 'opacity-30 cursor-not-allowed line-through' : 'talla-activa'}" ${prod.stock.M === 0 ? 'disabled' : ''}>M</button>`;
+                
+                const btnG = `<button onclick="seleccionarTalla(${prod.id}, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.G === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.G === 0 ? 'disabled' : ''}>G</button>`;
+                const btnXL = `<button onclick="seleccionarTalla(${prod.id}, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XL === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XL === 0 ? 'disabled' : ''}>XL</button>`;
+
+                html += `
+                <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg ${isAgotado ? 'opacity-50 grayscale' : ''}">
+                    <div>
+                        <div tabindex="0" class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img outline-none cursor-pointer">
+                            <img src="${prod.imagen}" class="object-cover w-full h-full absolute inset-0 opacity-90">
+                            
+                            <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
+                                <button onclick="openQuickView(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                            </div>
+
+                            <button onclick="toggleFavorito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
+                                <svg class="heart-icon-prod-${prod.id} w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                            </button>
+                        </div>
+                        <h3 class="text-white font-semibold text-sm truncate">${prod.nombre}</h3>
+                        <p class="text-[#b91c1c] font-bold mt-1 mb-3">$${prod.precio.toLocaleString('es-MX')} MXN</p>
+                        <div class="flex flex-wrap gap-1.5 mb-4 t-container-${prod.id} z-20 relative">
+                            ${btnXS} ${btnS} ${btnM} ${btnG} ${btnXL}
+                        </div>
+                    </div>
+                    <button onclick="agregarAlCarritoConTalla(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" ${disabledAttr} class="w-full font-bold py-2 rounded text-[11px] uppercase tracking-wider transition duration-300 z-20 relative ${btnClass}">${btnText}</button>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        /* --- MOTOR DE CARRUSEL --- */
         const carousel = document.getElementById('main-carousel');
         let autoScrollInterval;
         let isTouched = false;
@@ -533,11 +385,8 @@
         function initCarousel() {
             if(!carousel) return;
             startAutoScroll();
-            
             carousel.addEventListener('mouseenter', stopAutoScroll);
             carousel.addEventListener('mouseleave', startAutoScroll);
-            
-            // Pausar en móviles al tocar
             carousel.addEventListener('touchstart', () => { isTouched = true; stopAutoScroll(); }, {passive: true});
             carousel.addEventListener('touchend', () => { isTouched = false; startAutoScroll(); }, {passive: true});
         }
@@ -549,22 +398,11 @@
             const toast = document.createElement('div');
             const colorClass = isFav ? 'text-rose-500' : 'text-[#b91c1c]';
             const icon = isFav ? '❤️' : '🛍️';
-            
             toast.className = `bg-black/80 backdrop-blur-xl border border-white/10 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
-            toast.innerHTML = `
-                <div class="text-xl">${icon}</div>
-                <div>
-                    <h4 class="font-bold text-[11px] uppercase tracking-wider ${colorClass}">${title}</h4>
-                    <p class="text-xs text-neutral-300 mt-0.5">${message}</p>
-                </div>
-            `;
+            toast.innerHTML = `<div class="text-xl">${icon}</div><div><h4 class="font-bold text-[11px] uppercase tracking-wider ${colorClass}">${title}</h4><p class="text-xs text-neutral-300 mt-0.5">${message}</p></div>`;
             container.appendChild(toast);
-            
             setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
-            setTimeout(() => {
-                toast.classList.add('translate-x-full', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
         /* --- VISTA RÁPIDA (MODAL) --- */
@@ -575,58 +413,66 @@
             document.getElementById('qv-name').innerText = name;
             document.getElementById('qv-price').innerText = `$${price.toLocaleString('es-MX')} MXN`;
             
-            selectQVTalla(qvActiveTalla);
+            // Buscar el producto para ver su stock real
+            const producto = catalogo.find(p => p.id === id);
+            if(producto && producto.stock) {
+                const sContainer = document.getElementById('qv-sizes');
+                sContainer.innerHTML = `
+                    <button onclick="selectQVTalla('XS')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.XS === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.XS === 0 ? 'disabled' : ''}>XS</button>
+                    <button onclick="selectQVTalla('S')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.S === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.S === 0 ? 'disabled' : ''}>S</button>
+                    <button onclick="selectQVTalla('M')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.M === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.M === 0 ? 'disabled' : ''}>M</button>
+                    <button onclick="selectQVTalla('G')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.G === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.G === 0 ? 'disabled' : ''}>G</button>
+                    <button onclick="selectQVTalla('XL')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.XL === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.XL === 0 ? 'disabled' : ''}>XL</button>
+                `;
+            }
             
+            selectQVTalla(qvActiveTalla);
+
             const btnAdd = document.getElementById('qv-add-btn');
-            btnAdd.onclick = () => {
-                agregarAlCarritoConTallaDirecto(id, name, price, img, qvActiveTalla);
-                closeQuickView();
-            };
+            const totalStock = producto ? (producto.stock.XS + producto.stock.S + producto.stock.M + producto.stock.G + producto.stock.XL) : 1;
+            
+            if(totalStock === 0) {
+                btnAdd.innerText = "Producto Agotado";
+                btnAdd.classList.replace('bg-[#b91c1c]', 'bg-neutral-800');
+                btnAdd.classList.add('text-neutral-500', 'cursor-not-allowed', 'border', 'border-white/10');
+                btnAdd.disabled = true;
+            } else {
+                btnAdd.innerText = "Añadir a mis elecciones";
+                btnAdd.classList.replace('bg-neutral-800', 'bg-[#b91c1c]');
+                btnAdd.classList.remove('text-neutral-500', 'cursor-not-allowed', 'border', 'border-white/10');
+                btnAdd.disabled = false;
+                btnAdd.onclick = () => { agregarAlCarritoConTallaDirecto(id, name, price, img, qvActiveTalla); closeQuickView(); };
+            }
 
             const modal = document.getElementById('quick-view-modal');
             const content = document.getElementById('qv-content');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
         }
 
         function closeQuickView() {
             const content = document.getElementById('qv-content');
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                document.getElementById('quick-view-modal').classList.add('hidden');
-                document.getElementById('quick-view-modal').classList.remove('flex');
-            }, 300);
+            content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { document.getElementById('quick-view-modal').classList.add('hidden'); document.getElementById('quick-view-modal').classList.remove('flex'); }, 300);
         }
 
         function selectQVTalla(talla) {
             qvActiveTalla = talla;
             seleccionarTalla(qvActiveId, talla); 
             document.querySelectorAll('.qv-talla-btn').forEach(btn => {
-                if(btn.innerText === talla) {
-                    btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
-                    btn.classList.remove('bg-white/5', 'border-white/10');
-                } else {
-                    btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
-                    btn.classList.add('bg-white/5', 'border-white/10');
-                }
+                // If it's disabled (out of stock), don't style it as active
+                if(btn.disabled) return;
+                
+                if(btn.innerText === talla) { btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.remove('bg-white/5', 'border-white/10'); } 
+                else { btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.add('bg-white/5', 'border-white/10'); }
             });
         }
 
         /* --- FAVORITOS --- */
         function toggleFavorito(id, nombre, precio, imagen) {
             const index = favoritos.findIndex(item => item.id === id);
-            if (index > -1) { 
-                favoritos.splice(index, 1); 
-                showToast('Favoritos', `Eliminaste ${nombre}`, true);
-            } else { 
-                favoritos.push({ id, nombre, precio, imagen }); 
-                showToast('Favoritos', `Guardaste ${nombre}`, true);
-            }
+            if (index > -1) { favoritos.splice(index, 1); showToast('Favoritos', `Eliminaste ${nombre}`, true); } 
+            else { favoritos.push({ id, nombre, precio, imagen }); showToast('Favoritos', `Guardaste ${nombre}`, true); }
             localStorage.setItem('alcantarillaFavs', JSON.stringify(favoritos));
             actualizarInterfazFavoritos();
         }
@@ -640,16 +486,15 @@
         function actualizarInterfazFavoritos() {
             document.getElementById('fav-count').innerText = favoritos.length;
             const container = document.getElementById('fav-items-container');
-            if (favoritos.length === 0) { 
-                container.innerHTML = `<p class="text-xs text-neutral-500 text-center uppercase font-mono py-12">No tienes favoritos aún</p>`; 
-            } else {
+            if (favoritos.length === 0) { container.innerHTML = `<p class="text-xs text-neutral-500 text-center uppercase font-mono py-12">No tienes favoritos aún</p>`; } 
+            else {
                 container.innerHTML = favoritos.map(item => `
                     <div class="flex items-center gap-4 bg-white/5 backdrop-blur-md p-3 rounded-xl border border-white/10">
                         <img src="${item.imagen}" class="w-12 h-16 object-cover rounded bg-black/50">
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-bold text-white uppercase truncate">${item.nombre}</h4>
                             <p class="text-xs text-[#b91c1c] font-mono mt-0.5">$${item.precio.toLocaleString('es-MX')} MXN</p>
-                            <button onclick="moverFavoritoAlCarrito(${item.id}, '${item.nombre}', ${item.precio}, '${item.imagen}')" class="text-[10px] text-neutral-300 underline mt-1 block uppercase font-bold hover:text-[#b91c1c] transition">Mover al Carrito</button>
+                            <button onclick="moverFavoritoAlCarrito(${item.id}, '${item.nombre.replace(/'/g, "\\'")}', ${item.precio}, '${item.imagen}')" class="text-[10px] text-neutral-300 underline mt-1 block uppercase font-bold hover:text-[#b91c1c] transition">Mover al Carrito</button>
                         </div>
                         <button onclick="borrarFavoritoDirecto(${item.id})" class="text-neutral-500 hover:text-rose-500 p-2 transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-14v4m-4-4h4m1 0H4"></path></svg>
@@ -657,41 +502,27 @@
                     </div>
                 `).join('');
             }
-
+            
+            // Actualizar corazones en el DOM dinámico
             const idsGuardados = favoritos.map(f => f.id);
-            for(let id = 1; id <= 4; id++) {
-                document.querySelectorAll(`.heart-icon-prod-${id}`).forEach(icon => {
-                    if (idsGuardados.includes(id)) {
-                        icon.classList.remove('text-neutral-300', 'fill-none'); 
-                        icon.classList.add('text-rose-500', 'fill-rose-500', 'scale-110');
-                    } else {
-                        icon.classList.remove('text-rose-500', 'fill-rose-500', 'scale-110'); 
-                        icon.classList.add('text-neutral-300', 'fill-none');
-                    }
+            catalogo.forEach(prod => {
+                document.querySelectorAll(`.heart-icon-prod-${prod.id}`).forEach(icon => {
+                    if (idsGuardados.includes(prod.id)) { icon.classList.remove('text-neutral-300', 'fill-none'); icon.classList.add('text-rose-500', 'fill-rose-500', 'scale-110'); } 
+                    else { icon.classList.remove('text-rose-500', 'fill-rose-500', 'scale-110'); icon.classList.add('text-neutral-300', 'fill-none'); }
                 });
-            }
+            });
         }
 
-        function moverFavoritoAlCarrito(id, nombre, precio, imagen) {
-            agregarAlCarritoConTalla(id, nombre, precio, imagen);
-            borrarFavoritoDirecto(id);
-        }
+        function moverFavoritoAlCarrito(id, nombre, precio, imagen) { agregarAlCarritoConTalla(id, nombre, precio, imagen); borrarFavoritoDirecto(id); }
 
         /* --- CONTROL DE PANELES --- */
         function toggleDrawerGeneric(id) {
             const drawer = document.getElementById(id);
             const overlay = document.getElementById('global-overlay');
-            
-            document.querySelectorAll('.drawer-transition').forEach(d => {
-                if(d.id !== id && d.id !== 'qv-content') {
-                    d.classList.add('translate-x-full');
-                }
-            });
+            document.querySelectorAll('.drawer-transition').forEach(d => { if(d.id !== id && d.id !== 'qv-content') { d.classList.add('translate-x-full'); } });
             
             if (drawer.classList.contains('translate-x-full')) {
-                drawer.classList.remove('translate-x-full');
-                overlay.classList.remove('pointer-events-none', 'opacity-0'); 
-                overlay.classList.add('opacity-100');
+                drawer.classList.remove('translate-x-full'); overlay.classList.remove('pointer-events-none', 'opacity-0'); overlay.classList.add('opacity-100');
             } else { closeAllDrawers(); }
         }
 
@@ -704,8 +535,7 @@
             document.getElementById('fav-drawer').classList.add('translate-x-full');
             document.getElementById('mobile-menu').classList.add('translate-x-full');
             const overlay = document.getElementById('global-overlay');
-            overlay.classList.add('pointer-events-none', 'opacity-0'); 
-            overlay.classList.remove('opacity-100');
+            overlay.classList.add('pointer-events-none', 'opacity-0'); overlay.classList.remove('opacity-100');
         }
 
         /* --- CARRITO Y TALLAS --- */
@@ -714,20 +544,30 @@
             document.querySelectorAll(`.t-container-${productoId}`).forEach(contenedor => {
                 const botones = contenedor.getElementsByTagName('button');
                 for (let btn of botones) { 
-                    if(btn.innerText === talla) {
-                        btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
-                        btn.classList.remove('bg-white/5', 'border-white/10');
-                    } else {
-                        btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa');
-                        btn.classList.add('bg-white/5', 'border-white/10');
-                    }
+                    if(btn.disabled) continue; // No afectar las agotadas
+                    if(btn.innerText === talla) { btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.remove('bg-white/5', 'border-white/10'); } 
+                    else { btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.add('bg-white/5', 'border-white/10'); }
                 }
             });
         }
 
         function agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, tallaSelect) {
+            // Verificar si hay stock real en esa talla
+            const productoObj = catalogo.find(p => p.id === id);
+            if(productoObj && productoObj.stock[tallaSelect] === 0) {
+                showToast('Aviso', `La talla ${tallaSelect} de ${nombre} está agotada.`);
+                return;
+            }
+
             const itemUniqueId = `${id}-${tallaSelect}`;
             const productoExistente = carrito.find(item => item.uniqueId === itemUniqueId);
+            
+            // Si ya tiene todo el stock en el carrito
+            if(productoExistente && productoObj && productoExistente.amount >= productoObj.stock[tallaSelect]) {
+                showToast('Aviso', `Solo nos quedan ${productoObj.stock[tallaSelect]} piezas de ${tallaSelect}.`);
+                return;
+            }
+
             if (productoExistente) { productoExistente.amount += 1; } 
             else { carrito.push({ uniqueId: itemUniqueId, id, nombre: `${nombre} (${tallaSelect})`, precio, imagen, amount: 1 }); }
             
@@ -737,14 +577,39 @@
         }
 
         function agregarAlCarritoConTalla(id, nombre, precio, imagen) {
-            const talla = tallasSeleccionadas[id] || 'M';
+            // Default size if not selected
+            let talla = tallasSeleccionadas[id];
+            if(!talla) {
+                // Find first available size
+                const productoObj = catalogo.find(p => p.id === id);
+                if(productoObj) {
+                    if(productoObj.stock.M > 0) talla = 'M';
+                    else if(productoObj.stock.G > 0) talla = 'G';
+                    else if(productoObj.stock.S > 0) talla = 'S';
+                    else if(productoObj.stock.XL > 0) talla = 'XL';
+                    else if(productoObj.stock.XS > 0) talla = 'XS';
+                }
+                talla = talla || 'M'; // failsafe
+            }
             agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, talla);
         }
 
         function cambiarCantidad(uniqueId, cambio) {
             const producto = carrito.find(item => item.uniqueId === uniqueId);
             if (!producto) return;
-            producto.amount += cambio;
+
+            const baseId = parseInt(uniqueId.split('-')[0]);
+            const talla = uniqueId.split('-')[1];
+            const prodBase = catalogo.find(p => p.id === baseId);
+
+            const newAmount = producto.amount + cambio;
+            
+            if (newAmount > prodBase.stock[talla]) {
+                showToast('Aviso', `Solo nos quedan ${prodBase.stock[talla]} piezas de ${talla}.`);
+                return;
+            }
+
+            producto.amount = newAmount;
             if (producto.amount <= 0) { eliminarDelCarrito(uniqueId); return; }
             localStorage.setItem('alcantarillaCart', JSON.stringify(carrito));
             actualizarInterfazCarrito();
