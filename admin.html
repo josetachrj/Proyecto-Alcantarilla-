@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALCANTARILLA - Mi Cuenta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff; 
+            background-image: url('Images/fondo.png');
+            background-repeat: repeat;
+            background-size: 300px;
+            background-attachment: fixed;
+        }
+        .form-transition { transition: all 0.3s ease-in-out; }
+        /* Ocultar barra de scroll en el textarea */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 backdrop-blur-sm bg-black/60 opacity-0 transition-opacity duration-700 ease-out" onload="document.body.classList.remove('opacity-0')">
+
+    <div class="w-full max-w-md bg-[#0a0a0a]/95 border border-white/10 p-8 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl relative overflow-hidden my-8">
+        
+        <!-- Botón Volver -->
+        <a href="index.html" class="absolute top-6 left-6 text-neutral-500 hover:text-white transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </a>
+
+        <div class="text-center mb-8 mt-2">
+            <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-16 w-16 mx-auto rounded-full border border-white/10 mb-4 shadow-xl">
+            <h1 id="form-title" class="text-2xl font-black uppercase tracking-widest text-white">Bienvenido al Clan</h1>
+            <p id="form-subtitle" class="text-neutral-400 text-xs mt-2">Inicia sesión para continuar</p>
+        </div>
+
+        <!-- BOTONES DE INGRESO RÁPIDO (SSO) -->
+        <div class="space-y-3 mb-6">
+            <button onclick="simularOAuth('Google')" type="button" class="w-full flex items-center justify-center gap-3 bg-white text-black font-bold py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-neutral-200 transition">
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Continuar con Google
+            </button>
+            <button onclick="simularOAuth('Celular')" type="button" class="w-full flex items-center justify-center gap-3 bg-[#111111] border border-white/10 text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-white/10 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                Continuar con Celular
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 mb-6">
+            <hr class="flex-1 border-white/10"><span class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">O usa tu correo</span><hr class="flex-1 border-white/10">
+        </div>
+        
+        <!-- FORMULARIO INGRESO / REGISTRO TRADICIONAL -->
+        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4 relative">
+            
+            <div id="name-field" class="hidden form-transition">
+                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Nombre Completo</label>
+                <input type="text" id="user-name" placeholder="Tu nombre" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Correo Electrónico</label>
+                <input type="email" id="user-email" required placeholder="correo@ejemplo.com" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+            </div>
+            
+            <div>
+                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Contraseña</label>
+                <input type="password" id="user-password" required placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+            </div>
+
+            <!-- CAMPO DE DIRECCIÓN (SOLO VISIBLE AL REGISTRARSE) -->
+            <div id="address-field" class="hidden form-transition">
+                <label class="block text-[10px] font-bold text-[#b91c1c] uppercase tracking-widest mb-1.5">Dirección de Envío</label>
+                <textarea id="user-address" rows="2" placeholder="Calle, Número, Colonia, Código Postal, Ciudad..." class="w-full bg-[#b91c1c]/10 border border-[#b91c1c]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm no-scrollbar resize-none"></textarea>
+                <p class="text-[9px] text-neutral-500 mt-1">La guardaremos para tus futuras compras.</p>
+            </div>
+
+            <p id="auth-error" class="text-[#b91c1c] text-xs font-bold hidden text-center mt-2"></p>
+            
+            <button type="submit" id="submit-btn" class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-lg uppercase tracking-widest text-[11px] hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20 mt-4">Iniciar Sesión</button>
+        </form>
+
+        <div class="mt-6 text-center border-t border-white/10 pt-6">
+            <p class="text-xs text-neutral-400 font-medium">
+                <span id="toggle-text">¿No tienes cuenta?</span> 
+                <button onclick="toggleMode()" id="toggle-btn" class="text-white font-bold hover:text-[#b91c1c] transition uppercase tracking-wider ml-1">Regístrate</button>
+            </p>
+        </div>
+    </div>
+
+    <!-- Contenedor de Notificaciones -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
+
+    <script>
+        let isLoginMode = true;
+        let usuarios = JSON.parse(localStorage.getItem('alcantarillaUsers')) || [];
+
+        function showToast(title, message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `bg-black/80 backdrop-blur-xl border border-[#b91c1c]/30 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
+            toast.innerHTML = `
+                <div class="text-xl">⚙️</div>
+                <div>
+                    <h4 class="font-bold text-[11px] uppercase tracking-wider text-[#b91c1c]">${title}</h4>
+                    <p class="text-xs text-neutral-300 mt-0.5">${message}</p>
+                </div>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+
+        function simularOAuth(metodo) {
+            showToast('Conexión Simulada', `Redirigiendo a verificación por ${metodo}... (Requiere backend en producción)`);
+        }
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            const nameField = document.getElementById('name-field');
+            const addressField = document.getElementById('address-field');
+            const title = document.getElementById('form-title');
+            const subtitle = document.getElementById('form-subtitle');
+            const submitBtn = document.getElementById('submit-btn');
+            const toggleText = document.getElementById('toggle-text');
+            const toggleBtn = document.getElementById('toggle-btn');
+            const errorMsg = document.getElementById('auth-error');
+
+            errorMsg.classList.add('hidden');
+            document.getElementById('auth-form').reset();
+
+            if (isLoginMode) {
+                nameField.classList.add('hidden');
+                addressField.classList.add('hidden');
+                document.getElementById('user-name').removeAttribute('required');
+                document.getElementById('user-address').removeAttribute('required');
+                
+                title.innerText = "Bienvenido al Clan";
+                subtitle.innerText = "Inicia sesión para continuar";
+                submitBtn.innerText = "Iniciar Sesión";
+                toggleText.innerText = "¿No tienes cuenta?";
+                toggleBtn.innerText = "Regístrate";
+            } else {
+                nameField.classList.remove('hidden');
+                addressField.classList.remove('hidden');
+                document.getElementById('user-name').setAttribute('required', 'true');
+                document.getElementById('user-address').setAttribute('required', 'true');
+                
+                title.innerText = "Únete al Movimiento";
+                subtitle.innerText = "Crea tu cuenta de acceso";
+                submitBtn.innerText = "Crear Cuenta";
+                toggleText.innerText = "¿Ya eres miembro?";
+                toggleBtn.innerText = "Inicia Sesión";
+            }
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('user-email').value.trim().toLowerCase();
+            const pass = document.getElementById('user-password').value;
+            const errorMsg = document.getElementById('auth-error');
+
+            if (isLoginMode) {
+                // INICIAR SESIÓN
+                const user = usuarios.find(u => u.email === email && u.password === pass);
+                if (user) {
+                    // Guardar sesión activa con la dirección previamente registrada
+                    localStorage.setItem('alcantarillaSession', JSON.stringify({ 
+                        nombre: user.nombre, 
+                        email: user.email,
+                        direccion: user.direccion 
+                    }));
+                    window.location.href = 'index.html';
+                } else {
+                    errorMsg.innerText = "Correo o contraseña incorrectos.";
+                    errorMsg.classList.remove('hidden');
+                }
+            } else {
+                // REGISTRARSE
+                const nombre = document.getElementById('user-name').value.trim();
+                const direccion = document.getElementById('user-address').value.trim();
+                const existe = usuarios.find(u => u.email === email);
+                
+                if (existe) {
+                    errorMsg.innerText = "Este correo ya está registrado.";
+                    errorMsg.classList.remove('hidden');
+                } else if(pass.length < 6) {
+                    errorMsg.innerText = "La contraseña debe tener al menos 6 caracteres.";
+                    errorMsg.classList.remove('hidden');
+                } else if(direccion.length < 10) {
+                    errorMsg.innerText = "Por favor ingresa una dirección completa y válida.";
+                    errorMsg.classList.remove('hidden');
+                } else {
+                    // Guardar nuevo usuario con su dirección
+                    usuarios.push({ nombre, email, password: pass, direccion });
+                    localStorage.setItem('alcantarillaUsers', JSON.stringify(usuarios));
+                    
+                    // Iniciar sesión automáticamente
+                    localStorage.setItem('alcantarillaSession', JSON.stringify({ nombre, email, direccion }));
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
