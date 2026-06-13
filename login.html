@@ -55,17 +55,17 @@
     <!-- Contenedor Toasts -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
-    <script>
+   <script>
         const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // PON AQUÍ TU CORREO DE DUEÑO / ADMINISTRADOR
-        const CORREO_ADMIN = 'shopalcantarilla@gmail.com'; 
+        // CORREO ADMIN ASEGURADO EN MINÚSCULAS
+        const CORREO_ADMIN = 'shopalcantarilla@gmail.com'.toLowerCase(); 
 
         async function iniciarSesion(e) {
             e.preventDefault();
-            const email = document.getElementById('auth-email').value;
+            const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-pass').value;
             if(!email || !password) return showToast('Error', 'Llena ambos campos');
 
@@ -78,12 +78,13 @@
 
                 showToast('Éxito', 'Acceso concedido.');
                 
-                // EL CEREBRO DE REDIRECCIÓN
+                // REDIRECCIÓN INTELIGENTE
                 setTimeout(() => {
-                    if (data.user.email === CORREO_ADMIN) {
+                    const emailUsuario = data.user.email.toLowerCase();
+                    if (emailUsuario === CORREO_ADMIN) {
                         window.location.href = 'admin.html'; // El jefe va al panel
                     } else {
-                        window.location.href = 'Colecciones.html'; // Los clientes van a la tienda
+                        window.location.href = 'Colecciones.html'; // Clientes a la tienda
                     }
                 }, 1000);
 
@@ -95,7 +96,7 @@
 
         async function crearCuenta(e) {
             e.preventDefault();
-            const email = document.getElementById('auth-email').value;
+            const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-pass').value;
             if(!email || !password) return showToast('Error', 'Llena ambos campos para registrarte');
 
@@ -108,8 +109,14 @@
 
                 showToast('Bienvenido', 'Tu cuenta ha sido creada. Entrando...');
                 
+                // REDIRECCIÓN INTELIGENTE TAMBIÉN AL CREAR CUENTA
                 setTimeout(() => {
-                    window.location.href = 'Colecciones.html';
+                    const emailUsuario = data.user.email.toLowerCase();
+                    if (emailUsuario === CORREO_ADMIN) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'Colecciones.html';
+                    }
                 }, 1500);
 
             } catch (err) {
@@ -128,5 +135,3 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
     </script>
-</body>
-</html>
