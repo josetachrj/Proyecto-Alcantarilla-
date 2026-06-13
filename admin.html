@@ -3,206 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALCANTARILLA - Mi Cuenta</title>
+    <title>ALCANTARILLA - Panel de Control</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #050505; 
-            color: #ffffff; 
-            background-image: url('Images/fondo.png');
-            background-repeat: repeat;
-            background-size: 300px;
-            background-attachment: fixed;
-        }
-        .form-transition { transition: all 0.3s ease-in-out; }
-        /* Ocultar barra de scroll en el textarea */
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: #ffffff; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        input[type="file"]::file-selector-button {
+            border: 1px solid rgba(255,255,255,0.1);
+            background: #111;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        input[type="file"]::file-selector-button:hover { background: #b91c1c; border-color: #b91c1c; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 backdrop-blur-sm bg-black/60 opacity-0 transition-opacity duration-700 ease-out" onload="document.body.classList.remove('opacity-0')">
+<body class="min-h-screen flex bg-[#0a0a0a]">
 
-    <div class="w-full max-w-md bg-[#0a0a0a]/95 border border-white/10 p-8 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl relative overflow-hidden my-8">
-        
-        <!-- Botón Volver -->
-        <a href="index.html" class="absolute top-6 left-6 text-neutral-500 hover:text-white transition">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-        </a>
-
-        <div class="text-center mb-8 mt-2">
-            <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-16 w-16 mx-auto rounded-full border border-white/10 mb-4 shadow-xl">
-            <h1 id="form-title" class="text-2xl font-black uppercase tracking-widest text-white">Bienvenido al Clan</h1>
-            <p id="form-subtitle" class="text-neutral-400 text-xs mt-2">Inicia sesión para continuar</p>
+    <aside class="w-64 bg-black border-r border-white/10 flex flex-col hidden md:flex">
+        <div class="p-6 border-b border-white/10 flex items-center gap-3">
+            <img src="Images/logo2.jpeg" alt="Logo" class="w-10 h-10 rounded-full border border-white/20">
+            <span class="font-black uppercase tracking-widest text-sm">Admin v2.2</span>
         </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <a href="#" class="block bg-[#b91c1c] text-white px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider">📦 Inventario</a>
+            <a href="index.html" target="_blank" class="block text-neutral-400 hover:text-white hover:bg-white/5 px-4 py-3 rounded-lg text-xs font-bold uppercase tracking-wider transition">Tienda Pública ↗</a>
+        </nav>
+    </aside>
 
-        <!-- BOTONES DE INGRESO RÁPIDO (SSO) -->
-        <div class="space-y-3 mb-6">
-            <button onclick="simularOAuth('Google')" type="button" class="w-full flex items-center justify-center gap-3 bg-white text-black font-bold py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-neutral-200 transition">
-                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                Continuar con Google
-            </button>
-            <button onclick="simularOAuth('Celular')" type="button" class="w-full flex items-center justify-center gap-3 bg-[#111111] border border-white/10 text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider hover:bg-white/10 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                Continuar con Celular
-            </button>
-        </div>
+    <main class="flex-1 p-6 lg:p-10 overflow-y-auto">
+        <header class="mb-8">
+            <h1 class="text-3xl font-black uppercase tracking-widest text-white">Gestión de Catálogo</h1>
+            <p class="text-neutral-400 text-sm mt-1">Sube múltiples vistas de tus prendas directamente a Supabase Storage.</p>
+        </header>
 
-        <div class="flex items-center gap-3 mb-6">
-            <hr class="flex-1 border-white/10"><span class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">O usa tu correo</span><hr class="flex-1 border-white/10">
-        </div>
-        
-        <!-- FORMULARIO INGRESO / REGISTRO TRADICIONAL -->
-        <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4 relative">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
             
-            <div id="name-field" class="hidden form-transition">
-                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Nombre Completo</label>
-                <input type="text" id="user-name" placeholder="Tu nombre" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+            <div class="xl:col-span-1 bg-white/5 border border-white/10 p-6 rounded-2xl h-fit sticky top-6 shadow-2xl backdrop-blur-md">
+                <h2 class="text-sm font-black uppercase tracking-widest text-[#b91c1c] mb-6 border-b border-white/10 pb-4">Añadir Nueva Prenda</h2>
+                
+                <form id="admin-form" onsubmit="guardarProductoEnNube(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Nombre de la Prenda</label>
+                        <input type="text" id="prod-nombre" required placeholder="Ej. Hoodie Noche Urbana" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Precio (MXN)</label>
+                        <input type="number" id="prod-precio" required placeholder="Ej. 1499" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Foto Frontal (Vista Principal)</label>
+                        <div class="w-full bg-black/50 border border-white/10 rounded-lg p-2 flex items-center">
+                            <input type="file" id="prod-img-file" accept="image/*" required class="w-full text-xs text-neutral-400 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Foto de la Espalda (Para Vista Rápida)</label>
+                        <div class="w-full bg-black/50 border border-white/10 rounded-lg p-2 flex items-center">
+                            <input type="file" id="prod-back-img-file" accept="image/*" class="w-full text-xs text-neutral-400 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-[#b91c1c] uppercase tracking-widest mb-1.5 mt-4">Stock Físico (Piezas por Talla)</label>
+                        <div class="grid grid-cols-5 gap-2">
+                            <div><span class="text-[9px] text-center block mb-1 text-neutral-500">XS</span><input type="number" id="s-xs" value="0" min="0" class="w-full bg-black border border-white/10 rounded p-2 text-center text-xs text-white"></div>
+                            <div><span class="text-[9px] text-center block mb-1 text-neutral-500">S</span><input type="number" id="s-s" value="0" min="0" class="w-full bg-black border border-white/10 rounded p-2 text-center text-xs text-white"></div>
+                            <div><span class="text-[9px] text-center block mb-1 text-[#b91c1c] font-bold">M</span><input type="number" id="s-m" value="0" min="0" class="w-full bg-black border border-[#b91c1c]/50 rounded p-2 text-center text-xs text-white"></div>
+                            <div><span class="text-[9px] text-center block mb-1 text-neutral-500">G</span><input type="number" id="s-g" value="0" min="0" class="w-full bg-black border border-white/10 rounded p-2 text-center text-xs text-white"></div>
+                            <div><span class="text-[9px] text-center block mb-1 text-neutral-500">XL</span><input type="number" id="s-xl" value="0" min="0" class="w-full bg-black border border-white/10 rounded p-2 text-center text-xs text-white"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-submit" class="w-full bg-[#b91c1c] text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition shadow-[0_0_15px_rgba(185,28,28,0.3)] mt-4">
+                        Subir a la Base de Datos
+                    </button>
+                </form>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Correo Electrónico</label>
-                <input type="email" id="user-email" required placeholder="correo@ejemplo.com" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
-            </div>
-            
-            <div>
-                <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Contraseña</label>
-                <input type="password" id="user-password" required placeholder="••••••••" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+            <div class="xl:col-span-2">
+                <div class="bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-2xl backdrop-blur-md">
+                    <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/40">
+                        <h2 class="text-sm font-black uppercase tracking-widest text-white">Inventario Activo en la Nube</h2>
+                        <button onclick="cargarProductosDeNube()" class="text-xs text-neutral-400 hover:text-white flex items-center gap-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Refrescar</button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-black/80 text-[10px] uppercase tracking-widest text-neutral-500 border-b border-white/10">
+                                    <th class="p-4 font-bold">Prenda</th>
+                                    <th class="p-4 font-bold">Precio</th>
+                                    <th class="p-4 font-bold text-center">Stock Disponible</th>
+                                    <th class="p-4 font-bold text-right">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inventario-lista" class="text-sm divide-y divide-white/5">
+                                <tr><td colspan="4" class="p-8 text-center text-neutral-500 animate-pulse font-mono text-xs">Conectando con Supabase...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-            <!-- CAMPO DE DIRECCIÓN (SOLO VISIBLE AL REGISTRARSE) -->
-            <div id="address-field" class="hidden form-transition">
-                <label class="block text-[10px] font-bold text-[#b91c1c] uppercase tracking-widest mb-1.5">Dirección de Envío</label>
-                <textarea id="user-address" rows="2" placeholder="Calle, Número, Colonia, Código Postal, Ciudad..." class="w-full bg-[#b91c1c]/10 border border-[#b91c1c]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm no-scrollbar resize-none"></textarea>
-                <p class="text-[9px] text-neutral-500 mt-1">La guardaremos para tus futuras compras.</p>
-            </div>
-
-            <p id="auth-error" class="text-[#b91c1c] text-xs font-bold hidden text-center mt-2"></p>
-            
-            <button type="submit" id="submit-btn" class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-lg uppercase tracking-widest text-[11px] hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20 mt-4">Iniciar Sesión</button>
-        </form>
-
-        <div class="mt-6 text-center border-t border-white/10 pt-6">
-            <p class="text-xs text-neutral-400 font-medium">
-                <span id="toggle-text">¿No tienes cuenta?</span> 
-                <button onclick="toggleMode()" id="toggle-btn" class="text-white font-bold hover:text-[#b91c1c] transition uppercase tracking-wider ml-1">Regístrate</button>
-            </p>
         </div>
-    </div>
+    </main>
 
-    <!-- Contenedor de Notificaciones -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
     <script>
-        let isLoginMode = true;
-        let usuarios = JSON.parse(localStorage.getItem('alcantarillaUsers')) || [];
+        const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', () => { cargarProductosDeNube(); });
 
         function showToast(title, message) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `bg-black/80 backdrop-blur-xl border border-[#b91c1c]/30 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
-            toast.innerHTML = `
-                <div class="text-xl">⚙️</div>
-                <div>
-                    <h4 class="font-bold text-[11px] uppercase tracking-wider text-[#b91c1c]">${title}</h4>
-                    <p class="text-xs text-neutral-300 mt-0.5">${message}</p>
-                </div>
-            `;
+            toast.className = `bg-black/90 backdrop-blur-xl border border-white/10 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<div class="text-xl">⚡</div><div><h4 class="font-bold text-[11px] uppercase tracking-wider text-[#b91c1c]">${title}</h4><p class="text-xs text-neutral-300 mt-0.5">${message}</p></div>`;
             container.appendChild(toast);
             setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
-            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
-        function simularOAuth(metodo) {
-            showToast('Conexión Simulada', `Redirigiendo a verificación por ${metodo}... (Requiere backend en producción)`);
+        async function cargarProductosDeNube() {
+            const lista = document.getElementById('inventario-lista');
+            try {
+                const { data: productos, error } = await supabase.from('productos').select('*').order('creado_en', { ascending: false });
+                if (error) throw error;
+                if (productos.length === 0) { lista.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-neutral-500 font-mono text-xs">La base de datos está vacía.</td></tr>`; return; }
+
+                lista.innerHTML = productos.map(p => `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="flex gap-1">
+                                    <img src="${p.imagen_url}" title="Frente" class="w-8 h-11 object-cover rounded bg-black border border-white/10">
+                                    ${p.imagen_espalda_url ? `<img src="${p.imagen_espalda_url}" title="Espalda" class="w-8 h-11 object-cover rounded bg-black border border-white/10">` : ''}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-white uppercase text-xs truncate max-w-[150px]">${p.nombre}</p>
+                                    <p class="text-[10px] text-neutral-500 font-mono mt-0.5">ID: ${p.id}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-4 font-mono font-bold text-[#b91c1c]">$${p.precio}</td>
+                        <td class="p-4">
+                            <div class="flex justify-center gap-1 font-mono text-[9px] uppercase">
+                                <span class="bg-black border ${p.stock_xs > 0 ? 'border-white/20 text-white' : 'border-rose-900/50 text-rose-500'} px-1.5 py-1 rounded">XS:${p.stock_xs}</span>
+                                <span class="bg-black border ${p.stock_s > 0 ? 'border-white/20 text-white' : 'border-rose-900/50 text-rose-500'} px-1.5 py-1 rounded">S:${p.stock_s}</span>
+                                <span class="bg-black border ${p.stock_m > 0 ? 'border-white/20 text-white' : 'border-rose-900/50 text-rose-500'} px-1.5 py-1 rounded">M:${p.stock_m}</span>
+                                <span class="bg-black border ${p.stock_g > 0 ? 'border-white/20 text-white' : 'border-rose-900/50 text-rose-500'} px-1.5 py-1 rounded">G:${p.stock_g}</span>
+                                <span class="bg-black border ${p.stock_xl > 0 ? 'border-white/20 text-white' : 'border-rose-900/50 text-rose-500'} px-1.5 py-1 rounded">XL:${p.stock_xl}</span>
+                            </div>
+                        </td>
+                        <td class="p-4 text-right">
+                            <button onclick="eliminarPrendaNube(${p.id})" class="text-neutral-500 hover:text-rose-500 transition p-2 bg-black/50 rounded-lg border border-white/5 hover:border-rose-500/30">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-14v4m-4-4h4m1 0H4"></path></svg>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) { showToast("Error de Conexión", "No pudimos leer la base de datos."); }
         }
 
-        function toggleMode() {
-            isLoginMode = !isLoginMode;
-            const nameField = document.getElementById('name-field');
-            const addressField = document.getElementById('address-field');
-            const title = document.getElementById('form-title');
-            const subtitle = document.getElementById('form-subtitle');
-            const submitBtn = document.getElementById('submit-btn');
-            const toggleText = document.getElementById('toggle-text');
-            const toggleBtn = document.getElementById('toggle-btn');
-            const errorMsg = document.getElementById('auth-error');
-
-            errorMsg.classList.add('hidden');
-            document.getElementById('auth-form').reset();
-
-            if (isLoginMode) {
-                nameField.classList.add('hidden');
-                addressField.classList.add('hidden');
-                document.getElementById('user-name').removeAttribute('required');
-                document.getElementById('user-address').removeAttribute('required');
-                
-                title.innerText = "Bienvenido al Clan";
-                subtitle.innerText = "Inicia sesión para continuar";
-                submitBtn.innerText = "Iniciar Sesión";
-                toggleText.innerText = "¿No tienes cuenta?";
-                toggleBtn.innerText = "Regístrate";
-            } else {
-                nameField.classList.remove('hidden');
-                addressField.classList.remove('hidden');
-                document.getElementById('user-name').setAttribute('required', 'true');
-                document.getElementById('user-address').setAttribute('required', 'true');
-                
-                title.innerText = "Únete al Movimiento";
-                subtitle.innerText = "Crea tu cuenta de acceso";
-                submitBtn.innerText = "Crear Cuenta";
-                toggleText.innerText = "¿Ya eres miembro?";
-                toggleBtn.innerText = "Inicia Sesión";
-            }
-        }
-
-        function handleAuth(e) {
+        async function guardarProductoEnNube(e) {
             e.preventDefault();
-            const email = document.getElementById('user-email').value.trim().toLowerCase();
-            const pass = document.getElementById('user-password').value;
-            const errorMsg = document.getElementById('auth-error');
+            const btn = document.getElementById('btn-submit');
+            
+            const fileInputFront = document.getElementById('prod-img-file');
+            const fileInputBack = document.getElementById('prod-back-img-file');
+            
+            const fileFront = fileInputFront.files[0];
+            const fileBack = fileInputBack.files[0];
 
-            if (isLoginMode) {
-                // INICIAR SESIÓN
-                const user = usuarios.find(u => u.email === email && u.password === pass);
-                if (user) {
-                    // Guardar sesión activa con la dirección previamente registrada
-                    localStorage.setItem('alcantarillaSession', JSON.stringify({ 
-                        nombre: user.nombre, 
-                        email: user.email,
-                        direccion: user.direccion 
-                    }));
-                    window.location.href = 'index.html';
-                } else {
-                    errorMsg.innerText = "Correo o contraseña incorrectos.";
-                    errorMsg.classList.remove('hidden');
-                }
-            } else {
-                // REGISTRARSE
-                const nombre = document.getElementById('user-name').value.trim();
-                const direccion = document.getElementById('user-address').value.trim();
-                const existe = usuarios.find(u => u.email === email);
+            if (!fileFront) { showToast("Error", "Debes seleccionar al menos la foto de frente."); return; }
+
+            btn.innerText = "Subiendo foto frontal..."; btn.classList.add('opacity-50', 'cursor-wait'); btn.disabled = true;
+
+            try {
+                // 1. Subir Foto Frontal
+                const extFront = fileFront.name.split('.').pop();
+                const nameFront = `front-${Date.now()}-${Math.random().toString(36).substring(7)}.${extFront}`;
+                const { error: errFront } = await supabase.storage.from('ropa').upload(nameFront, fileFront);
+                if (errFront) throw errFront;
                 
-                if (existe) {
-                    errorMsg.innerText = "Este correo ya está registrado.";
-                    errorMsg.classList.remove('hidden');
-                } else if(pass.length < 6) {
-                    errorMsg.innerText = "La contraseña debe tener al menos 6 caracteres.";
-                    errorMsg.classList.remove('hidden');
-                } else if(direccion.length < 10) {
-                    errorMsg.innerText = "Por favor ingresa una dirección completa y válida.";
-                    errorMsg.classList.remove('hidden');
-                } else {
-                    // Guardar nuevo usuario con su dirección
-                    usuarios.push({ nombre, email, password: pass, direccion });
-                    localStorage.setItem('alcantarillaUsers', JSON.stringify(usuarios));
+                const { data: { publicUrl: urlFront } } = supabase.storage.from('ropa').getPublicUrl(nameFront);
+
+                // 2. Subir Foto Trasera (Si se seleccionó)
+                let urlBack = null;
+                if (fileBack) {
+                    btn.innerText = "Subiendo foto trasera...";
+                    const extBack = fileBack.name.split('.').pop();
+                    const nameBack = `back-${Date.now()}-${Math.random().toString(36).substring(7)}.${extBack}`;
+                    const { error: errBack } = await supabase.storage.from('ropa').upload(nameBack, fileBack);
+                    if (errBack) throw errBack;
                     
-                    // Iniciar sesión automáticamente
-                    localStorage.setItem('alcantarillaSession', JSON.stringify({ nombre, email, direccion }));
-                    window.location.href = 'index.html';
+                    const { data: { publicUrl: publicUrlBack } } = supabase.storage.from('ropa').getPublicUrl(nameBack);
+                    urlBack = publicUrlBack;
                 }
+
+                btn.innerText = "Sincronizando inventario...";
+
+                // 3. Insertar el registro final con los dos links en Supabase
+                const nuevoProducto = {
+                    nombre: document.getElementById('prod-nombre').value,
+                    precio: parseFloat(document.getElementById('prod-precio').value),
+                    imagen_url: urlFront,
+                    imagen_espalda_url: urlBack, // Guardando la de espalda
+                    stock_xs: parseInt(document.getElementById('s-xs').value),
+                    stock_s: parseInt(document.getElementById('s-s').value),
+                    stock_m: parseInt(document.getElementById('s-m').value),
+                    stock_g: parseInt(document.getElementById('s-g').value),
+                    stock_xl: parseInt(document.getElementById('s-xl').value),
+                    activo: true
+                };
+
+                const { error: dbError } = await supabase.from('productos').insert([nuevoProducto]);
+                if (dbError) throw dbError;
+
+                showToast("Éxito", "Prenda subida con éxito.");
+                document.getElementById('admin-form').reset();
+                cargarProductosDeNube();
+
+            } catch (error) {
+                console.error("Error completo al guardar:", error);
+                showToast("Error", "Hubo un problema al procesar la subida.");
+            } finally {
+                btn.innerText = "Subir a la Base de Datos"; btn.classList.remove('opacity-50', 'cursor-wait'); btn.disabled = false;
             }
+        }
+
+        async function eliminarPrendaNube(id) {
+            if(!confirm("¿Estás seguro de que quieres eliminar esta prenda de producción?")) return;
+            try {
+                const { error } = await supabase.from('productos').delete().eq('id', id);
+                if (error) throw error;
+                showToast("Inventario", "Prenda eliminada.");
+                cargarProductosDeNube();
+            } catch (error) { showToast("Error", "No se pudo borrar."); }
         }
     </script>
 </body>
