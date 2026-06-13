@@ -6,6 +6,7 @@
     <title>ALCANTARILLA - Streetwear & AI Try-On</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
@@ -43,7 +44,7 @@
         @keyframes roachJitter { 0% { transform: translateX(0) rotate(-3deg); } 100% { transform: translateX(-2px) rotate(3deg); } }
     </style>
 </head>
-<body class="relative min-h-screen opacity-0 transition-opacity duration-700 ease-out">
+<body class="relative min-h-screen bg-[#050505]">
 
     <header class="border-b border-white/10 bg-black/40 backdrop-blur-2xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
@@ -166,7 +167,8 @@
 
         <div class="w-full overflow-hidden">
             <div id="main-carousel" class="flex gap-6 px-4 w-full overflow-x-auto no-scrollbar cursor-grab active:cursor-grabbing pb-4">
-                </div>
+                <p class="text-neutral-500 font-mono text-center w-full animate-pulse py-10">Conectando con Supabase...</p>
+            </div>
         </div>
     </section>
 
@@ -237,9 +239,14 @@
         <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeQuickView()"></div>
         <div class="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden transform scale-95 opacity-0 transition-all duration-300 max-h-[85vh] md:max-h-none" id="qv-content">
             <button onclick="closeQuickView()" class="absolute top-4 right-4 z-50 bg-black/70 p-2.5 rounded-full text-neutral-400 hover:text-white border border-white/10 backdrop-blur-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            <div class="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative shrink-0">
-                <img id="qv-img" src="" class="absolute inset-0 w-full h-full object-cover">
+            
+            <div class="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative shrink-0 overflow-hidden group/qv bg-black/50">
+                <img id="qv-img" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 cursor-pointer">
+                <div id="qv-hint" class="absolute bottom-4 left-0 right-0 text-center pointer-events-none hidden transition-opacity duration-300">
+                    <span class="bg-black/80 text-white text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20 backdrop-blur-md">↻ Toca o pasa el mouse</span>
+                </div>
             </div>
+            
             <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center bg-black/40 overflow-y-auto no-scrollbar">
                 <span class="text-[#b91c1c] text-xs font-black tracking-widest uppercase mb-2">Streetwear Premium</span>
                 <h2 id="qv-name" class="text-2xl md:text-3xl font-black text-white uppercase mb-2"></h2>
@@ -248,8 +255,7 @@
                 
                 <div class="mb-6">
                     <p class="text-xs text-white font-bold uppercase tracking-wider mb-2">Tallas Disponibles:</p>
-                    <div class="flex flex-wrap gap-2" id="qv-sizes">
-                        </div>
+                    <div class="flex flex-wrap gap-2" id="qv-sizes"></div>
                 </div>
                 <button id="qv-add-btn" class="w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Añadir a mis elecciones</button>
             </div>
@@ -282,44 +288,84 @@
     </div>
 
     <script>
-        // Cargar Catálogo Base (Si está vacío, usa el default)
-        const catalogoDefault = [
-            { id: 1, nombre: "Playera Alcantarilla", precio: 899, imagen: "Images/playeraverde.png", stock: { XS: 5, S: 10, M: 15, G: 10, XL: 2 } },
-            { id: 2, nombre: "Hoodie Noche Urbana", precio: 1499, imagen: "Images/playeranegrechino.png", stock: { XS: 2, S: 5, M: 8, G: 5, XL: 1 } },
-            { id: 3, nombre: "Joggers Callejero", precio: 1199, imagen: "Images/playeranegra2.png", stock: { XS: 10, S: 15, M: 20, G: 15, XL: 5 } },
-            { id: 4, nombre: "Chaqueta Rebel Tech", precio: 2299, imagen: "Images/playeracrema.png", stock: { XS: 0, S: 3, M: 5, G: 2, XL: 0 } }
-        ];
+        // 1. INICIALIZAR SUPABASE
+        const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        let catalogo = JSON.parse(localStorage.getItem('alcantarillaCatalogo')) || catalogoDefault;
-        // Rescatar fallos de BD vieja
-        catalogo = catalogo.map(p => { if (!p.stock) p.stock = { XS: 10, S: 10, M: 10, G: 10, XL: 10 }; return p; });
-        localStorage.setItem('alcantarillaCatalogo', JSON.stringify(catalogo));
-
+        // 2. VARIABLES GLOBALES
+        let catalogo = []; // Ahora iniciará vacío y se llenará desde la nube
         let carrito = JSON.parse(localStorage.getItem('alcantarillaCart')) || [];
         let favoritos = JSON.parse(localStorage.getItem('alcantarillaFavs')) || []; 
         let tallasSeleccionadas = {};
+        
+        // Variables para Vista Rápida
         let qvActiveId = null;
         let qvActiveTalla = 'M';
+        let currentFrontImg = '';
+        let currentBackImg = '';
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderProductosIndex(); // <-- ESTA ES LA MAGIA DINÁMICA
+            // Cargar datos reales desde Supabase primero
+            cargarCatalogoSupabase();
+            
             actualizarInterfazCarrito();
             actualizarInterfazFavoritos();
             setTimeout(() => { document.body.classList.remove('opacity-0'); document.body.classList.add('opacity-100'); }, 50);
-            initCarousel();
         });
+
+        /* --- CARGAR DATOS DE SUPABASE --- */
+        async function cargarCatalogoSupabase() {
+            try {
+                // Traer máximo 8 productos recientes para el carrusel principal
+                const { data, error } = await supabase
+                    .from('productos')
+                    .select('*')
+                    .eq('activo', true)
+                    .order('creado_en', { ascending: false })
+                    .limit(8);
+
+                if (error) throw error;
+
+                // Transformar los datos de Supabase a la estructura que usa nuestra página
+                catalogo = data.map(p => ({
+                    id: p.id,
+                    nombre: p.nombre,
+                    precio: p.precio,
+                    imagen: p.imagen_url,
+                    imagen_espalda: p.imagen_espalda_url, // Nueva columna
+                    stock: {
+                        XS: p.stock_xs || 0,
+                        S: p.stock_s || 0,
+                        M: p.stock_m || 0,
+                        G: p.stock_g || 0,
+                        XL: p.stock_xl || 0
+                    }
+                }));
+
+                // Una vez cargados, pintarlos en la pantalla
+                renderProductosIndex();
+                initCarousel(); // Iniciar animación de deslizamiento
+                
+                // Actualizar los corazones si ya estaban en favoritos
+                actualizarInterfazFavoritos();
+
+            } catch (err) {
+                console.error("Error al conectar con Supabase:", err);
+                document.getElementById('main-carousel').innerHTML = '<p class="text-rose-500 font-mono text-center w-full py-10">Error al cargar la colección. Revisa tu conexión.</p>';
+            }
+        }
 
         /* --- RENDER DINÁMICO DE PRODUCTOS --- */
         function renderProductosIndex() {
             const container = document.getElementById('main-carousel');
-            if(!container) return;
+            if(!container || catalogo.length === 0) return;
 
             let html = '';
             // Para el efecto de carrusel infinito, pintamos el catálogo 2 veces seguidas
             const displayCatalog = [...catalogo, ...catalogo];
 
             displayCatalog.forEach((prod) => {
-                // Calcular stock total de la prenda
                 const stockTotal = prod.stock.XS + prod.stock.S + prod.stock.M + prod.stock.G + prod.stock.XL;
                 const isAgotado = stockTotal === 0;
                 
@@ -327,15 +373,14 @@
                 const btnClass = isAgotado ? "bg-neutral-800 text-neutral-500 cursor-not-allowed border border-white/10" : "bg-white text-black hover:bg-[#b91c1c] hover:text-white";
                 const disabledAttr = isAgotado ? "disabled" : "";
 
-                // Generar los botones de talla revisando si hay stock
                 const btnXS = `<button onclick="seleccionarTalla(${prod.id}, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XS === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XS === 0 ? 'disabled' : ''}>XS</button>`;
                 const btnS = `<button onclick="seleccionarTalla(${prod.id}, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.S === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.S === 0 ? 'disabled' : ''}>S</button>`;
-                
-                // M se selecciona por defecto si hay, si no, se muestra normal pero sin ser 'talla-activa'
                 const btnM = `<button onclick="seleccionarTalla(${prod.id}, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white transition ${prod.stock.M === 0 ? 'opacity-30 cursor-not-allowed line-through' : 'talla-activa'}" ${prod.stock.M === 0 ? 'disabled' : ''}>M</button>`;
-                
                 const btnG = `<button onclick="seleccionarTalla(${prod.id}, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.G === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.G === 0 ? 'disabled' : ''}>G</button>`;
                 const btnXL = `<button onclick="seleccionarTalla(${prod.id}, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XL === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XL === 0 ? 'disabled' : ''}>XL</button>`;
+
+                // Aquí pasamos ambas imágenes a la función openQuickView (la normal y la de espalda)
+                const imgBackArg = prod.imagen_espalda ? `'${prod.imagen_espalda}'` : `null`;
 
                 html += `
                 <div class="w-[280px] bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shrink-0 shadow-xl hover:border-white/30 backdrop-blur-lg ${isAgotado ? 'opacity-50 grayscale' : ''}">
@@ -344,7 +389,7 @@
                             <img src="${prod.imagen}" class="object-cover w-full h-full absolute inset-0 opacity-90">
                             
                             <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="openQuickView(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
+                                <button onclick="openQuickView(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}', ${imgBackArg})" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0">Vista Rápida</button>
                             </div>
 
                             <button onclick="toggleFavorito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300">
@@ -364,56 +409,46 @@
             container.innerHTML = html;
         }
 
-        /* --- MOTOR DE CARRUSEL --- */
-        const carousel = document.getElementById('main-carousel');
-        let autoScrollInterval;
-        let isTouched = false;
-
-        function startAutoScroll() {
-            stopAutoScroll();
-            autoScrollInterval = setInterval(() => {
-                if(!isTouched && carousel) {
-                    carousel.scrollLeft += 1;
-                    if (carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth)) {
-                        carousel.scrollLeft = 0;
-                    }
-                }
-            }, 20);
-        }
-        function stopAutoScroll() { clearInterval(autoScrollInterval); }
-
-        function initCarousel() {
-            if(!carousel) return;
-            startAutoScroll();
-            carousel.addEventListener('mouseenter', stopAutoScroll);
-            carousel.addEventListener('mouseleave', startAutoScroll);
-            carousel.addEventListener('touchstart', () => { isTouched = true; stopAutoScroll(); }, {passive: true});
-            carousel.addEventListener('touchend', () => { isTouched = false; startAutoScroll(); }, {passive: true});
-        }
-        function scrollCarousel(dir) { if(carousel) carousel.scrollBy({ left: dir, behavior: 'smooth' }); }
-
-        /* --- NOTIFICACIONES TOASTS --- */
-        function showToast(title, message, isFav = false) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colorClass = isFav ? 'text-rose-500' : 'text-[#b91c1c]';
-            const icon = isFav ? '❤️' : '🛍️';
-            toast.className = `bg-black/80 backdrop-blur-xl border border-white/10 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
-            toast.innerHTML = `<div class="text-xl">${icon}</div><div><h4 class="font-bold text-[11px] uppercase tracking-wider ${colorClass}">${title}</h4><p class="text-xs text-neutral-300 mt-0.5">${message}</p></div>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
-            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
-        }
-
-        /* --- VISTA RÁPIDA (MODAL) --- */
-        function openQuickView(id, name, price, img) {
+        /* --- VISTA RÁPIDA (MODAL) Y ROTACIÓN DE IMAGEN --- */
+        function openQuickView(id, name, price, imgFront, imgBack) {
             qvActiveId = id;
             qvActiveTalla = tallasSeleccionadas[id] || 'M';
-            document.getElementById('qv-img').src = img;
+            
+            currentFrontImg = imgFront;
+            currentBackImg = imgBack || imgFront; // Si no hay foto de espalda, usa la de frente
+
+            const imgEl = document.getElementById('qv-img');
+            const hint = document.getElementById('qv-hint');
+            
+            imgEl.src = currentFrontImg;
             document.getElementById('qv-name').innerText = name;
             document.getElementById('qv-price').innerText = `$${price.toLocaleString('es-MX')} MXN`;
             
-            // Buscar el producto para ver su stock real
+            // Mostrar u ocultar el letrero dependiendo de si hay imagen trasera
+            if(imgBack) {
+                hint.classList.remove('hidden');
+                
+                // Efecto Hover (PC)
+                imgEl.onmouseenter = () => { imgEl.style.opacity = 0.5; setTimeout(() => { imgEl.src = currentBackImg; imgEl.style.opacity = 1; }, 150); };
+                imgEl.onmouseleave = () => { imgEl.style.opacity = 0.5; setTimeout(() => { imgEl.src = currentFrontImg; imgEl.style.opacity = 1; }, 150); };
+                
+                // Efecto Click (Celulares)
+                imgEl.onclick = () => {
+                    imgEl.style.opacity = 0.5;
+                    setTimeout(() => {
+                        if(imgEl.src === currentFrontImg) imgEl.src = currentBackImg;
+                        else imgEl.src = currentFrontImg;
+                        imgEl.style.opacity = 1;
+                    }, 150);
+                };
+            } else {
+                hint.classList.add('hidden');
+                imgEl.onmouseenter = null;
+                imgEl.onmouseleave = null;
+                imgEl.onclick = null;
+            }
+
+            // Construir botones de tallas con el stock real
             const producto = catalogo.find(p => p.id === id);
             if(producto && producto.stock) {
                 const sContainer = document.getElementById('qv-sizes');
@@ -441,7 +476,7 @@
                 btnAdd.classList.replace('bg-neutral-800', 'bg-[#b91c1c]');
                 btnAdd.classList.remove('text-neutral-500', 'cursor-not-allowed', 'border', 'border-white/10');
                 btnAdd.disabled = false;
-                btnAdd.onclick = () => { agregarAlCarritoConTallaDirecto(id, name, price, img, qvActiveTalla); closeQuickView(); };
+                btnAdd.onclick = () => { agregarAlCarritoConTallaDirecto(id, name, price, imgFront, qvActiveTalla); closeQuickView(); };
             }
 
             const modal = document.getElementById('quick-view-modal');
@@ -460,12 +495,49 @@
             qvActiveTalla = talla;
             seleccionarTalla(qvActiveId, talla); 
             document.querySelectorAll('.qv-talla-btn').forEach(btn => {
-                // If it's disabled (out of stock), don't style it as active
                 if(btn.disabled) return;
-                
                 if(btn.innerText === talla) { btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.remove('bg-white/5', 'border-white/10'); } 
                 else { btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.add('bg-white/5', 'border-white/10'); }
             });
+        }
+
+        /* --- MOTOR DE CARRUSEL --- */
+        const carousel = document.getElementById('main-carousel');
+        let autoScrollInterval;
+        let isTouched = false;
+
+        function startAutoScroll() {
+            stopAutoScroll();
+            autoScrollInterval = setInterval(() => {
+                if(!isTouched && carousel && catalogo.length > 0) {
+                    carousel.scrollLeft += 1;
+                    if (carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth)) carousel.scrollLeft = 0;
+                }
+            }, 20);
+        }
+        function stopAutoScroll() { clearInterval(autoScrollInterval); }
+
+        function initCarousel() {
+            if(!carousel) return;
+            startAutoScroll();
+            carousel.addEventListener('mouseenter', stopAutoScroll);
+            carousel.addEventListener('mouseleave', startAutoScroll);
+            carousel.addEventListener('touchstart', () => { isTouched = true; stopAutoScroll(); }, {passive: true});
+            carousel.addEventListener('touchend', () => { isTouched = false; startAutoScroll(); }, {passive: true});
+        }
+        function scrollCarousel(dir) { if(carousel) carousel.scrollBy({ left: dir, behavior: 'smooth' }); }
+
+        /* --- NOTIFICACIONES TOASTS --- */
+        function showToast(title, message, isFav = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colorClass = isFav ? 'text-rose-500' : 'text-[#b91c1c]';
+            const icon = isFav ? '❤️' : '🛍️';
+            toast.className = `bg-black/80 backdrop-blur-xl border border-white/10 text-white p-4 rounded-xl shadow-2xl flex items-center gap-3 transform transition-all duration-300 translate-x-full opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<div class="text-xl">${icon}</div><div><h4 class="font-bold text-[11px] uppercase tracking-wider ${colorClass}">${title}</h4><p class="text-xs text-neutral-300 mt-0.5">${message}</p></div>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.remove('translate-x-full', 'opacity-0'); }, 10);
+            setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
         }
 
         /* --- FAVORITOS --- */
@@ -503,7 +575,6 @@
                 `).join('');
             }
             
-            // Actualizar corazones en el DOM dinámico
             const idsGuardados = favoritos.map(f => f.id);
             catalogo.forEach(prod => {
                 document.querySelectorAll(`.heart-icon-prod-${prod.id}`).forEach(icon => {
@@ -544,7 +615,7 @@
             document.querySelectorAll(`.t-container-${productoId}`).forEach(contenedor => {
                 const botones = contenedor.getElementsByTagName('button');
                 for (let btn of botones) { 
-                    if(btn.disabled) continue; // No afectar las agotadas
+                    if(btn.disabled) continue; 
                     if(btn.innerText === talla) { btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.remove('bg-white/5', 'border-white/10'); } 
                     else { btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]', 'talla-activa'); btn.classList.add('bg-white/5', 'border-white/10'); }
                 }
@@ -552,7 +623,6 @@
         }
 
         function agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, tallaSelect) {
-            // Verificar si hay stock real en esa talla
             const productoObj = catalogo.find(p => p.id === id);
             if(productoObj && productoObj.stock[tallaSelect] === 0) {
                 showToast('Aviso', `La talla ${tallaSelect} de ${nombre} está agotada.`);
@@ -562,7 +632,6 @@
             const itemUniqueId = `${id}-${tallaSelect}`;
             const productoExistente = carrito.find(item => item.uniqueId === itemUniqueId);
             
-            // Si ya tiene todo el stock en el carrito
             if(productoExistente && productoObj && productoExistente.amount >= productoObj.stock[tallaSelect]) {
                 showToast('Aviso', `Solo nos quedan ${productoObj.stock[tallaSelect]} piezas de ${tallaSelect}.`);
                 return;
@@ -577,10 +646,8 @@
         }
 
         function agregarAlCarritoConTalla(id, nombre, precio, imagen) {
-            // Default size if not selected
             let talla = tallasSeleccionadas[id];
             if(!talla) {
-                // Find first available size
                 const productoObj = catalogo.find(p => p.id === id);
                 if(productoObj) {
                     if(productoObj.stock.M > 0) talla = 'M';
@@ -589,7 +656,7 @@
                     else if(productoObj.stock.XL > 0) talla = 'XL';
                     else if(productoObj.stock.XS > 0) talla = 'XS';
                 }
-                talla = talla || 'M'; // failsafe
+                talla = talla || 'M'; 
             }
             agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, talla);
         }
