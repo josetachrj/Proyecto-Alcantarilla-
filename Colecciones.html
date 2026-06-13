@@ -48,7 +48,7 @@
 </head>
 <body class="relative min-h-screen bg-[#050505]">
 
-    <!-- 1. NAVBAR -->
+    <!-- NAVBAR -->
     <header class="border-b border-white/10 bg-black/40 backdrop-blur-2xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
             <div class="flex items-center gap-4 flex-shrink-0">
@@ -87,7 +87,7 @@
         </div>
     </header>
 
-    <!-- 2. CABECERA DE COLECCIONES -->
+    <!-- CABECERA DE COLECCIONES -->
     <section class="max-w-7xl mx-auto px-4 pt-16 pb-8 border-b border-white/10">
         <div class="flex flex-col md:flex-row justify-between items-end gap-6 bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
             <div>
@@ -107,14 +107,14 @@
         </div>
     </section>
 
-    <!-- 3. GRID DE PRODUCTOS DINÁMICO -->
+    <!-- GRID DE PRODUCTOS -->
     <section class="max-w-7xl mx-auto px-4 py-12">
         <div id="productos-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 xl:gap-8">
             <p class="text-neutral-500 font-mono text-center col-span-full py-10 animate-pulse">Conectando con Supabase...</p>
         </div>
     </section>
 
-    <!-- 4. SECCIÓN DE COMENTARIOS / RESEÑAS DINÁMICA -->
+    <!-- SECCIÓN DE RESEÑAS -->
     <section class="max-w-7xl mx-auto px-4 py-16 mb-10 bg-black/40 border border-white/10 rounded-3xl backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.5)]">
         <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-6 px-4">
             <div>
@@ -129,7 +129,7 @@
         </div>
     </section>
 
-    <!-- 5. FOOTER -->
+    <!-- FOOTER -->
     <footer class="mt-20 bg-black/60 backdrop-blur-2xl relative z-10 pt-16 pb-8 border-t border-white/10 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
         <div class="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12 mb-16">
             <div class="col-span-1 md:col-span-2">
@@ -163,14 +163,16 @@
         </div>
     </footer>
 
+    <div class="pest-container rat-path"><span class="rat-body">🐀</span></div>
+    <div class="pest-container roach-path"><span class="roach-body">🪳</span></div>
+
     <!-- OVERLAYS Y MODALES -->
     <div id="global-overlay" onclick="window.closeAllDrawers()" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 pointer-events-none opacity-0 transition-opacity duration-300"></div>
 
-    <!-- MODAL DE DEJAR RESEÑA -->
     <div id="review-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="window.closeReviewModal()"></div>
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="window.closeAllDrawers()"></div>
         <div class="relative bg-[#111111] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto p-6 md:p-8 transform transition-all">
-            <button onclick="window.closeReviewModal()" class="absolute top-4 right-4 z-50 bg-black/50 p-1.5 rounded-full text-neutral-400 hover:text-white border border-white/10 backdrop-blur-md"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <button onclick="window.closeAllDrawers()" class="absolute top-4 right-4 z-50 bg-black/50 p-1.5 rounded-full text-neutral-400 hover:text-white border border-white/10 backdrop-blur-md"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             <h2 class="text-xl md:text-2xl font-black text-white uppercase mb-6 pr-8">Escribe tu reseña</h2>
             
             <form id="review-form" onsubmit="window.submitReview(event)" class="space-y-4">
@@ -197,7 +199,18 @@
         </div>
     </div>
 
-    <!-- PANEL DE FILTROS -->
+    <!-- Menú Móvil -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black/95 backdrop-blur-3xl z-50 transform translate-x-full drawer-transition flex flex-col items-center justify-center space-y-8 text-2xl font-black">
+        <button onclick="window.closeAllDrawers()" class="absolute top-6 right-6 text-neutral-400 hover:text-white p-2 border border-white/10 rounded-full"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+        <a href="index.html" onclick="window.closeAllDrawers()" class="hover:text-[#b91c1c] transition uppercase tracking-widest text-white">Novedades</a>
+        <a href="Colecciones.html" onclick="window.closeAllDrawers()" class="hover:text-[#b91c1c] transition uppercase tracking-widest text-white">Colecciones</a>
+        <a href="index.html#probador-ia" onclick="window.closeAllDrawers()" class="text-[#b91c1c] flex items-center gap-2 uppercase tracking-widest">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> 
+            Probador IA
+        </a>
+    </div>
+
+    <!-- PANEL DE FILTROS INTELIGENTES -->
     <div id="filter-drawer" class="fixed top-0 left-0 h-full w-full sm:w-[380px] bg-[#0a0a0a]/95 backdrop-blur-3xl border-r border-white/10 z-50 transform -translate-x-full drawer-transition flex flex-col shadow-2xl">
         <div class="p-6 border-b border-white/10 flex items-center justify-between">
             <h2 class="text-base font-bold uppercase tracking-wider text-white">Filtros</h2>
@@ -232,9 +245,9 @@
 
     <!-- Modal Vista Rápida -->
     <div id="quick-view-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4">
-        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="window.closeQuickView()"></div>
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="window.closeAllDrawers()"></div>
         <div class="relative bg-[#0a0a0a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col md:flex-row overflow-hidden transform scale-95 opacity-0 transition-all duration-300 max-h-[85vh] md:max-h-none" id="qv-content">
-            <button onclick="window.closeQuickView()" class="absolute top-4 right-4 z-50 bg-black/70 p-2.5 rounded-full text-neutral-400 hover:text-white border border-white/10 backdrop-blur-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            <button onclick="window.closeAllDrawers()" class="absolute top-4 right-4 z-50 bg-black/70 p-2.5 rounded-full text-neutral-400 hover:text-white border border-white/10 backdrop-blur-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             
             <div class="w-full md:w-1/2 h-48 sm:h-64 md:h-auto relative shrink-0 overflow-hidden group/qv bg-black/50">
                 <img id="qv-img" src="" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 cursor-pointer">
@@ -284,7 +297,7 @@
         </div>
     </div>
 
-    <!-- EL CEREBRO JAVASCRIPT FINAL Y COMPLETO -->
+    <!-- EL CEREBRO JAVASCRIPT BLINDADO -->
     <script>
         const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
@@ -298,13 +311,35 @@
         window.qvActiveTalla = 'M';
         window.currentFrontImg = '';
         window.currentBackImg = '';
-        window.filtroTallas = []; // ¡AQUI ESTÁ EL CEREBRO DE TALLAS!
+        window.filtroTallas = [];
         
         window.reseñasPorDefecto = [
             { nombre_mostrar: "Andrea G.", texto: "Lo mejor que he comprado este año. La IA no falla.", estrellas: 5, compra_verificada: true },
             { nombre_mostrar: "Daniel R.", texto: "Me encanta el estilo, nadie más tiene estas prendas. El envío fue rápido.", estrellas: 4, compra_verificada: true },
             { nombre_mostrar: "Carlos M.", texto: "La chamarra superó mis expectativas. El fit es perfecto.", estrellas: 5, compra_verificada: true }
         ];
+
+        // FUNCION MAESTRA PARA CERRAR TODO (MODALES, MENUS Y OVERLAYS) DE FORMA SEGURA
+        window.closeAllDrawers = function() {
+            try {
+                document.getElementById('cart-drawer')?.classList.add('translate-x-full');
+                document.getElementById('fav-drawer')?.classList.add('translate-x-full');
+                document.getElementById('filter-drawer')?.classList.add('-translate-x-full');
+                document.getElementById('mobile-menu')?.classList.add('translate-x-full');
+                
+                document.getElementById('global-overlay')?.classList.add('pointer-events-none', 'opacity-0');
+                document.getElementById('global-overlay')?.classList.remove('opacity-100');
+                
+                document.getElementById('review-modal')?.classList.add('hidden');
+                document.getElementById('review-modal')?.classList.remove('flex');
+                
+                const qvModal = document.getElementById('quick-view-modal');
+                if(qvModal) {
+                    qvModal.classList.add('hidden'); 
+                    qvModal.classList.remove('flex');
+                }
+            } catch(e) { console.error(e); }
+        };
 
         window.toggleDrawerGeneric = function(id) {
             const drawer = document.getElementById(id);
@@ -318,7 +353,9 @@
                 drawer.classList.remove('translate-x-full', '-translate-x-full'); 
                 overlay.classList.remove('pointer-events-none', 'opacity-0'); 
                 overlay.classList.add('opacity-100');
-            } else { window.closeAllDrawers(); }
+            } else { 
+                window.closeAllDrawers(); 
+            }
         };
 
         window.toggleCartDrawer = function() { window.toggleDrawerGeneric('cart-drawer'); };
@@ -326,33 +363,11 @@
         window.toggleFilterDrawer = function() { window.toggleDrawerGeneric('filter-drawer'); };
         window.toggleMobileMenu = function() { window.toggleDrawerGeneric('mobile-menu'); };
         
-        window.closeAllDrawers = function() {
-            document.getElementById('cart-drawer').classList.add('translate-x-full');
-            document.getElementById('fav-drawer').classList.add('translate-x-full');
-            document.getElementById('filter-drawer').classList.add('-translate-x-full');
-            document.getElementById('mobile-menu').classList.add('translate-x-full');
-            document.getElementById('global-overlay').classList.add('pointer-events-none', 'opacity-0');
-            document.getElementById('global-overlay').classList.remove('opacity-100');
-            window.closeReviewModal();
-            window.closeQuickView();
-        };
-
         window.openReviewModal = function() {
             document.getElementById('global-overlay').classList.remove('pointer-events-none', 'opacity-0'); 
             document.getElementById('global-overlay').classList.add('opacity-100');
             document.getElementById('review-modal').classList.remove('hidden'); 
             document.getElementById('review-modal').classList.add('flex');
-        };
-
-        window.closeReviewModal = function() {
-            if(document.getElementById('cart-drawer').classList.contains('translate-x-full') && 
-               document.getElementById('fav-drawer').classList.contains('translate-x-full') && 
-               document.getElementById('filter-drawer').classList.contains('-translate-x-full')) {
-                document.getElementById('global-overlay').classList.add('pointer-events-none', 'opacity-0'); 
-                document.getElementById('global-overlay').classList.remove('opacity-100');
-            }
-            document.getElementById('review-modal').classList.add('hidden'); 
-            document.getElementById('review-modal').classList.remove('flex');
         };
 
         window.showToast = function(title, message, isFav = false) {
@@ -367,7 +382,7 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3500);
         };
 
-        // ====== LÓGICA DE FILTROS AÑADIDA ======
+        // LÓGICA DE FILTROS BLINDADA
         window.toggleFilterSize = function(btn, talla) {
             if(window.filtroTallas.includes(talla)) {
                 window.filtroTallas = window.filtroTallas.filter(t => t !== talla);
@@ -381,47 +396,57 @@
         };
 
         window.aplicarFiltros = function() {
-            const checkboxes = document.querySelectorAll('.cat-filter');
-            let keywords = [];
-            checkboxes.forEach(chk => { if(chk.checked) keywords.push(...chk.value.split(',')); });
+            try {
+                const checkboxes = document.querySelectorAll('.cat-filter');
+                let keywords = [];
+                checkboxes.forEach(chk => { if(chk.checked) keywords.push(...chk.value.split(',')); });
 
-            let filtrados = window.catalogo;
+                let filtrados = window.catalogo;
 
-            if(keywords.length > 0) {
-                filtrados = filtrados.filter(prod => {
-                    const nombreMinuscula = prod.nombre.toLowerCase();
-                    return keywords.some(kw => nombreMinuscula.includes(kw));
-                });
+                if(keywords.length > 0) {
+                    filtrados = filtrados.filter(prod => {
+                        // Evita que un producto sin nombre colapse el sistema
+                        const nombreMinuscula = (prod.nombre || '').toLowerCase();
+                        return keywords.some(kw => nombreMinuscula.includes(kw));
+                    });
+                }
+
+                if(window.filtroTallas.length > 0) {
+                    filtrados = filtrados.filter(prod => {
+                        return window.filtroTallas.some(talla => (prod.stock[talla] > 0));
+                    });
+                }
+
+                window.renderProductosColecciones(filtrados);
+                window.closeAllDrawers();
+                window.showToast('Filtros', `Encontramos ${filtrados.length} piezas.`);
+            } catch (err) {
+                console.error("Error al aplicar filtros:", err);
+                window.closeAllDrawers(); // Garantizamos que siempre se cierre aunque haya error
             }
-
-            if(window.filtroTallas.length > 0) {
-                filtrados = filtrados.filter(prod => {
-                    return window.filtroTallas.some(talla => prod.stock[talla] > 0);
-                });
-            }
-
-            window.renderProductosColecciones(filtrados);
-            window.closeAllDrawers();
-            window.showToast('Filtros', `Encontramos ${filtrados.length} piezas.`);
         };
 
         window.limpiarFiltros = function() {
-            document.querySelectorAll('.cat-filter').forEach(chk => chk.checked = false);
-            window.filtroTallas = [];
-            const panelFiltros = document.getElementById('filter-drawer');
-            if(panelFiltros) {
-                panelFiltros.querySelectorAll('button').forEach(btn => {
-                    if(btn.innerText === 'XS' || btn.innerText === 'S' || btn.innerText === 'M' || btn.innerText === 'G' || btn.innerText === 'XL') {
-                        btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]');
-                        btn.classList.add('bg-white/5', 'border-white/10');
-                    }
-                });
+            try {
+                document.querySelectorAll('.cat-filter').forEach(chk => chk.checked = false);
+                window.filtroTallas = [];
+                const panelFiltros = document.getElementById('filter-drawer');
+                if(panelFiltros) {
+                    panelFiltros.querySelectorAll('button').forEach(btn => {
+                        if(btn.innerText === 'XS' || btn.innerText === 'S' || btn.innerText === 'M' || btn.innerText === 'G' || btn.innerText === 'XL') {
+                            btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]');
+                            btn.classList.add('bg-white/5', 'border-white/10');
+                        }
+                    });
+                }
+                window.renderProductosColecciones(window.catalogo);
+                window.closeAllDrawers();
+                window.showToast('Filtros', 'Filtros eliminados.');
+            } catch(err) {
+                console.error("Error al limpiar filtros:", err);
+                window.closeAllDrawers(); 
             }
-            window.renderProductosColecciones(window.catalogo);
-            window.closeAllDrawers();
-            window.showToast('Filtros', 'Filtros eliminados.');
         };
-        // =======================================
 
         window.cargarCatalogoSupabase = async function() {
             try {
@@ -431,7 +456,7 @@
                     id: p.id, nombre: p.nombre, precio: p.precio, imagen: p.imagen_url, imagen_espalda: p.imagen_espalda_url,
                     stock: { XS: p.stock_xs || 0, S: p.stock_s || 0, M: p.stock_m || 0, G: p.stock_g || 0, XL: p.stock_xl || 0 }
                 }));
-                window.renderProductosColecciones(window.catalogo); // Modificado para aceptar listas
+                window.renderProductosColecciones(window.catalogo);
                 window.actualizarInterfazFavoritos();
             } catch (err) {
                 document.getElementById('productos-grid').innerHTML = '<p class="text-rose-500 font-mono text-center col-span-full py-10">Error de conexión con la base de datos.</p>';
@@ -459,9 +484,9 @@
                         <div tabindex="0" class="bg-black/50 rounded-lg overflow-hidden aspect-[4/5] relative mb-4 group/img outline-none cursor-pointer">
                             <img src="${prod.imagen}" class="object-cover w-full h-full absolute inset-0 opacity-90">
                             <div class="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 backdrop-blur-[2px]">
-                                <button onclick="window.openQuickView(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}', ${imgBackArg})" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0 pointer-events-auto">Vista Rápida</button>
+                                <button onclick="window.openQuickView(${prod.id}, '${(prod.nombre||'').replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}', ${imgBackArg})" class="bg-black/60 hover:bg-[#b91c1c] text-white border border-white/20 font-bold py-2.5 px-5 rounded-full text-[10px] uppercase tracking-wider backdrop-blur-md transition shadow-lg transform translate-y-4 group-hover/img:translate-y-0 pointer-events-auto">Vista Rápida</button>
                             </div>
-                            <button onclick="window.toggleFavorito(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md pointer-events-auto">
+                            <button onclick="window.toggleFavorito(${prod.id}, '${(prod.nombre||'').replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" class="absolute top-3 right-3 z-20 bg-black/50 hover:bg-black/80 p-2 rounded-full border border-white/10 transition duration-300 backdrop-blur-md pointer-events-auto">
                                 <svg class="heart-icon-prod-${prod.id} w-4 h-4 text-neutral-300 fill-none transition duration-300" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
                             </button>
                         </div>
@@ -475,7 +500,7 @@
                             <button onclick="window.seleccionarTalla(${prod.id}, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XL === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XL === 0 ? 'disabled' : ''}>XL</button>
                         </div>
                     </div>
-                    <button onclick="window.agregarAlCarritoConTalla(${prod.id}, '${prod.nombre.replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" ${isAgotado ? "disabled" : ""} class="w-full font-bold py-2 rounded text-[11px] uppercase tracking-wider transition duration-300 z-20 relative ${isAgotado ? "bg-neutral-800 text-neutral-500 cursor-not-allowed border border-white/10" : "bg-white text-black hover:bg-[#b91c1c] hover:text-white"}">${isAgotado ? "Agotado" : "Agregar al Carrito"}</button>
+                    <button onclick="window.agregarAlCarritoConTalla(${prod.id}, '${(prod.nombre||'').replace(/'/g, "\\'")}', ${prod.precio}, '${prod.imagen}')" ${isAgotado ? "disabled" : ""} class="w-full font-bold py-2 rounded text-[11px] uppercase tracking-wider transition duration-300 z-20 relative ${isAgotado ? "bg-neutral-800 text-neutral-500 cursor-not-allowed border border-white/10" : "bg-white text-black hover:bg-[#b91c1c] hover:text-white"}">${isAgotado ? "Agotado" : "Agregar al Carrito"}</button>
                 </div>`;
             }).join('');
         };
@@ -520,7 +545,7 @@
                 if (error) throw error;
                 window.showToast('Comunidad', '¡Tu reseña se ha guardado en la nube!');
                 e.target.reset(); 
-                window.closeReviewModal();
+                window.closeAllDrawers();
                 window.cargarResenasSupabase(); 
             } catch (err) {
                 window.showToast('Error', 'No se pudo subir tu opinión.');
@@ -564,7 +589,7 @@
                 btnAdd.innerText = "Producto Agotado"; btnAdd.disabled = true; btnAdd.className = "w-full bg-neutral-800 text-neutral-500 cursor-not-allowed border border-white/10 py-3.5 rounded-xl text-xs uppercase tracking-widest";
             } else {
                 btnAdd.innerText = "Añadir a mis elecciones"; btnAdd.disabled = false; btnAdd.className = "w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20";
-                btnAdd.onclick = () => { window.agregarAlCarritoConTallaDirecto(id, name, price, imgFront, window.qvActiveTalla); window.closeQuickView(); };
+                btnAdd.onclick = () => { window.agregarAlCarritoConTallaDirecto(id, name, price, imgFront, window.qvActiveTalla); window.closeAllDrawers(); };
             }
 
             document.getElementById('global-overlay').classList.remove('pointer-events-none', 'opacity-0'); document.getElementById('global-overlay').classList.add('opacity-100');
@@ -572,18 +597,6 @@
             const content = document.getElementById('qv-content');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             setTimeout(() => { content.classList.remove('scale-95', 'opacity-0'); content.classList.add('scale-100', 'opacity-100'); }, 10);
-        };
-
-        window.closeQuickView = function() {
-            const content = document.getElementById('qv-content');
-            content.classList.remove('scale-100', 'opacity-100'); content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => { 
-                document.getElementById('quick-view-modal').classList.add('hidden'); 
-                document.getElementById('quick-view-modal').classList.remove('flex');
-                if(document.getElementById('cart-drawer').classList.contains('translate-x-full') && document.getElementById('fav-drawer').classList.contains('translate-x-full') && document.getElementById('filter-drawer').classList.contains('-translate-x-full')) {
-                    document.getElementById('global-overlay').classList.add('pointer-events-none', 'opacity-0'); document.getElementById('global-overlay').classList.remove('opacity-100');
-                }
-            }, 300);
         };
 
         window.selectQVTalla = function(talla) {
@@ -620,7 +633,7 @@
                         <div class="flex-1 min-w-0">
                             <h4 class="text-xs font-bold text-white uppercase truncate">${item.nombre}</h4>
                             <p class="text-xs text-[#b91c1c] font-mono mt-0.5">$${item.precio.toLocaleString('es-MX')} MXN</p>
-                            <button onclick="window.moverFavoritoAlCarrito(${item.id}, '${item.nombre.replace(/'/g, "\\'")}', ${item.precio}, '${item.imagen}')" class="text-[10px] text-neutral-300 underline mt-1 block uppercase font-bold hover:text-[#b91c1c] transition">Mover al Carrito</button>
+                            <button onclick="window.moverFavoritoAlCarrito(${item.id}, '${(item.nombre||'').replace(/'/g, "\\'")}', ${item.precio}, '${item.imagen}')" class="text-[10px] text-neutral-300 underline mt-1 block uppercase font-bold hover:text-[#b91c1c] transition">Mover al Carrito</button>
                         </div>
                         <button onclick="window.borrarFavoritoDirecto(${item.id})" class="text-neutral-500 hover:text-rose-500 p-2 transition"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-14v4m-4-4h4m1 0H4"></path></svg></button>
                     </div>`).join('');
@@ -713,7 +726,7 @@
                 </div>`).join('');
         };
 
-        // INICIO
+        // INICIO FINAL
         document.addEventListener('DOMContentLoaded', () => {
             const btnOpenReview = document.getElementById('btn-open-review');
             if (btnOpenReview) btnOpenReview.addEventListener('click', () => { window.openReviewModal(); });
