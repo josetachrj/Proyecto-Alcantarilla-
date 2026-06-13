@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALCANTARILLA - Pago Seguro</title>
+    <title>Checkout - ALCANTARILLA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
@@ -18,192 +19,175 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Animación de carga para el pago */
-        .loader { border: 3px solid rgba(255,255,255,0.1); border-left-color: #b91c1c; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-10 px-4 backdrop-blur-sm bg-black/60 opacity-0 transition-opacity duration-700 ease-out" onload="document.body.classList.remove('opacity-0')">
+<body class="relative min-h-screen bg-[#050505] flex flex-col">
 
-    <header class="w-full max-w-6xl mb-8 flex justify-between items-center">
-        <a href="index.html" class="flex items-center gap-3 group">
-            <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-12 w-12 rounded-full border border-white/10 group-hover:border-[#b91c1c] transition">
-            <span class="font-black uppercase tracking-widest text-lg group-hover:text-[#b91c1c] transition">Volver a tienda</span>
-        </a>
-        <div class="flex items-center gap-2 text-neutral-400 text-xs font-bold uppercase tracking-wider bg-black/50 px-4 py-2 rounded-lg border border-white/10">
-            <svg class="w-4 h-4 text-[#b91c1c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-            Pago Encriptado
+    <!-- NAVBAR SIMPLE (Sin menús, para enfocar en la compra) -->
+    <header class="border-b border-white/10 bg-black/80 backdrop-blur-2xl sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="Colecciones.html" class="text-neutral-400 hover:text-white transition flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver a la tienda
+            </a>
+            <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-12 w-12 object-cover rounded-full border border-white/10">
+            <div class="w-24"></div> <!-- Espaciador -->
         </div>
     </header>
 
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <!-- CHECKOUT -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-12 grid lg:grid-cols-12 gap-12">
         
-        <div class="lg:col-span-7 space-y-6">
+        <!-- FORMULARIO DE DATOS (Columna Izquierda) -->
+        <div class="lg:col-span-7 bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl h-fit">
+            <h1 class="text-2xl font-black uppercase text-white mb-8">Datos de Envío</h1>
             
-            <div class="bg-[#0a0a0a]/95 border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-xl">
-                <h2 class="text-lg font-black uppercase tracking-widest text-white mb-6 border-b border-white/10 pb-4">1. Detalles de Envío</h2>
-                <div class="space-y-4">
+            <form id="form-checkout" onsubmit="procesarCompra(event)" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Nombre de quien recibe</label>
-                        <input type="text" id="checkout-name" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm">
+                        <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Nombre Completo</label>
+                        <input type="text" id="chk-nombre" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-[#b91c1c] uppercase tracking-widest mb-1.5">Dirección de Entrega</label>
-                        <textarea id="checkout-address" rows="3" required class="w-full bg-[#b91c1c]/10 border border-[#b91c1c]/30 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] text-sm resize-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Correo de Confirmación</label>
-                        <input type="email" id="checkout-email" readonly class="w-full bg-black/50 border border-white/5 rounded-lg p-3 text-neutral-500 cursor-not-allowed text-sm">
+                        <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Correo Electrónico</label>
+                        <input type="email" id="chk-email" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
                     </div>
                 </div>
-            </div>
 
-            <div class="bg-[#0a0a0a]/95 border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-xl">
-                <h2 class="text-lg font-black uppercase tracking-widest text-white mb-6 border-b border-white/10 pb-4">2. Método de Pago</h2>
-                
-                <form id="payment-form" onsubmit="simularPago(event)">
-                    <div class="space-y-5">
-                        <div class="relative bg-gradient-to-tr from-neutral-900 to-neutral-800 border border-white/10 p-5 rounded-xl overflow-hidden shadow-inner">
-                            <svg class="absolute right-4 bottom-4 w-12 h-12 opacity-10" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-                            <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Número de Tarjeta</label>
-                            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" required class="w-full bg-transparent text-xl font-mono text-white placeholder-neutral-600 focus:outline-none mb-4 tracking-widest">
-                            
-                            <div class="flex gap-4">
-                                <div class="flex-1">
-                                    <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">Vencimiento</label>
-                                    <input type="text" placeholder="MM/AA" maxlength="5" required class="w-full bg-transparent text-sm font-mono text-white placeholder-neutral-600 focus:outline-none tracking-widest">
-                                </div>
-                                <div class="flex-1">
-                                    <label class="block text-[10px] font-bold text-neutral-400 uppercase tracking-widest mb-1.5">CVC</label>
-                                    <input type="password" placeholder="•••" maxlength="4" required class="w-full bg-transparent text-sm font-mono text-white placeholder-neutral-600 focus:outline-none tracking-widest">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <button type="submit" id="btn-pay" class="w-full bg-[#b91c1c] text-white font-black py-4 rounded-xl text-xs uppercase tracking-widest hover:bg-[#dc2626] transition flex justify-center items-center gap-3 shadow-[0_0_15px_rgba(185,28,28,0.3)]">
-                            <span id="btn-text">Completar Pedido Seguro</span>
-                            <div id="btn-loader" class="loader hidden"></div>
-                        </button>
-                    </div>
-                </form>
-            </div>
+                <div>
+                    <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Teléfono / WhatsApp</label>
+                    <input type="tel" id="chk-telefono" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Dirección de Entrega (Calle, Número, Colonia)</label>
+                    <textarea id="chk-direccion" required rows="2" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition no-scrollbar"></textarea>
+                </div>
+
+                <div class="pt-6 border-t border-white/10">
+                    <button type="submit" id="btn-pagar" class="w-full bg-[#b91c1c] text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Confirmar Pedido</button>
+                    <p class="text-center text-[10px] text-neutral-500 mt-4 uppercase tracking-widest">Al confirmar, enviaremos un ticket a tu correo con los métodos de pago.</p>
+                </div>
+            </form>
         </div>
 
-        <div class="lg:col-span-5">
-            <div class="bg-[#0a0a0a]/95 border border-white/10 p-8 rounded-2xl shadow-2xl backdrop-blur-xl sticky top-28">
-                <h2 class="text-lg font-black uppercase tracking-widest text-white mb-6 border-b border-white/10 pb-4">Tu Pedido</h2>
-                
-                <div id="checkout-items" class="space-y-4 max-h-[40vh] overflow-y-auto no-scrollbar mb-6">
-                    </div>
+        <!-- RESUMEN DEL PEDIDO (Columna Derecha) -->
+        <div class="lg:col-span-5 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-xl h-fit sticky top-28">
+            <h2 class="text-lg font-black uppercase text-white mb-6">Tu Orden</h2>
+            
+            <div id="checkout-items" class="space-y-4 mb-6 max-h-[40vh] overflow-y-auto no-scrollbar pr-2">
+                <!-- Se llena con JS -->
+            </div>
 
-                <div class="border-t border-white/10 pt-4 space-y-3 font-mono text-sm">
-                    <div class="flex justify-between text-neutral-400"><span>Subtotal</span><span id="summary-subtotal">$0 MXN</span></div>
-                    <div class="flex justify-between text-neutral-400"><span>Envío Express</span><span>$150 MXN</span></div>
-                    <div class="flex justify-between text-white font-black text-xl pt-2 border-t border-white/10 mt-2">
-                        <span class="font-sans uppercase">Total</span><span id="summary-total" class="text-[#b91c1c]">$0 MXN</span>
-                    </div>
+            <div class="border-t border-white/10 pt-6 space-y-3">
+                <div class="flex justify-between text-neutral-400 text-sm">
+                    <span>Subtotal</span>
+                    <span id="res-subtotal">$0 MXN</span>
+                </div>
+                <div class="flex justify-between text-neutral-400 text-sm">
+                    <span>Envío</span>
+                    <span class="text-white font-semibold">Por calcular</span>
+                </div>
+                <div class="flex justify-between items-end mt-4 pt-4 border-t border-white/10">
+                    <span class="text-white font-bold uppercase tracking-widest">Total Estimado</span>
+                    <span id="res-total" class="text-3xl font-black text-[#b91c1c]">$0 MXN</span>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div id="success-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-        <div class="bg-[#111111] border border-[#b91c1c]/50 rounded-2xl shadow-[0_0_50px_rgba(185,28,28,0.3)] w-full max-w-sm p-8 text-center transform scale-95 opacity-0 transition-all duration-300" id="success-content">
-            <div class="w-16 h-16 bg-[#b91c1c]/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-[#b91c1c]">
-                <svg class="w-8 h-8 text-[#b91c1c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    <!-- Pantalla de Éxito -->
+    <div id="success-screen" class="fixed inset-0 bg-[#050505] z-50 hidden flex-col items-center justify-center p-4">
+        <div class="bg-black/50 p-10 rounded-3xl border border-white/10 backdrop-blur-xl text-center max-w-lg">
+            <div class="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
             </div>
-            <h2 class="text-2xl font-black uppercase text-white mb-2">¡Pago Exitoso!</h2>
-            <p class="text-xs text-neutral-400 mb-6 leading-relaxed">Tu pedido ha sido procesado. Te enviaremos el código de rastreo a tu correo en breve. Bienvenido al clan.</p>
-            <button onclick="finalizarCompra()" class="w-full bg-white text-black font-black py-3 rounded-lg uppercase tracking-widest text-[11px] hover:bg-neutral-200 transition">Regresar a la Tienda</button>
+            <h2 class="text-3xl font-black uppercase text-white mb-4">¡Orden Recibida!</h2>
+            <p class="text-neutral-400 text-sm leading-relaxed mb-8">Hemos registrado tu pedido con éxito. En breve recibirás un ticket en tu correo electrónico con las instrucciones de pago y los pasos a seguir.</p>
+            <a href="index.html" class="inline-block bg-white text-black hover:bg-neutral-200 font-black py-3 px-8 rounded-xl uppercase tracking-widest text-xs transition">Volver al Inicio</a>
         </div>
     </div>
 
+    <!-- LOGICA JAVASCRIPT -->
     <script>
+        const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let carritoFinal = JSON.parse(localStorage.getItem('alcantarillaCart')) || [];
+
         document.addEventListener('DOMContentLoaded', () => {
-            verificarSesionYCarrito();
+            if(carritoFinal.length === 0) {
+                alert("Tu clóset está vacío. Redirigiendo a la tienda...");
+                window.location.href = 'Colecciones.html';
+                return;
+            }
+            renderizarResumen();
         });
 
-        function verificarSesionYCarrito() {
-            const session = JSON.parse(localStorage.getItem('alcantarillaSession'));
-            const carrito = JSON.parse(localStorage.getItem('alcantarillaCart')) || [];
+        function renderizarResumen() {
+            const container = document.getElementById('checkout-items');
+            let total = 0;
 
-            // 1. Si no hay carrito, regresarlo
-            if (carrito.length === 0) {
-                alert("Tu carrito está vacío. Redirigiendo a la tienda...");
-                window.location.href = 'index.html';
-                return;
-            }
-
-            // 2. Si no hay sesión, regresarlo a login
-            if (!session) {
-                alert("Debes iniciar sesión para completar tu compra.");
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // 3. Rellenar datos del usuario
-            document.getElementById('checkout-name').value = session.nombre;
-            document.getElementById('checkout-email').value = session.email;
-            if (session.direccion) {
-                document.getElementById('checkout-address').value = session.direccion;
-            }
-
-            // 4. Pintar los items del pedido
-            const itemsContainer = document.getElementById('checkout-items');
-            itemsContainer.innerHTML = carrito.map(item => `
-                <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl border border-white/5">
-                    <img src="${item.imagen}" class="w-12 h-16 object-cover rounded bg-black">
+            container.innerHTML = carritoFinal.map(item => {
+                const subItem = item.precio * item.amount;
+                total += subItem;
+                return `
+                <div class="flex items-center gap-4 bg-black/50 p-3 rounded-xl border border-white/5">
+                    <img src="${item.imagen}" class="w-14 h-16 object-cover rounded bg-black">
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-[11px] font-bold text-white uppercase truncate">${item.nombre}</h4>
-                        <p class="text-[10px] text-neutral-500 mt-0.5">Cant: ${item.amount}</p>
+                        <h4 class="text-xs font-bold text-white uppercase truncate">${item.nombre}</h4>
+                        <p class="text-[10px] text-neutral-400 mt-1">Cantidad: ${item.amount}</p>
                     </div>
-                    <p class="text-xs text-[#b91c1c] font-mono font-bold">$${(item.precio * item.amount).toLocaleString('es-MX')}</p>
-                </div>
-            `).join('');
+                    <span class="text-sm font-bold text-[#b91c1c]">$${subItem.toLocaleString('es-MX')}</span>
+                </div>`;
+            }).join('');
 
-            // 5. Calcular totales
-            const subtotal = carrito.reduce((ac, item) => ac + (item.precio * item.amount), 0);
-            const costoEnvio = 150;
-            const total = subtotal + costoEnvio;
-
-            document.getElementById('summary-subtotal').innerText = `$${subtotal.toLocaleString('es-MX')} MXN`;
-            document.getElementById('summary-total').innerText = `$${total.toLocaleString('es-MX')} MXN`;
-            document.getElementById('btn-text').innerText = `Pagar $${total.toLocaleString('es-MX')} MXN`;
+            document.getElementById('res-subtotal').innerText = `$${total.toLocaleString('es-MX')} MXN`;
+            document.getElementById('res-total').innerText = `$${total.toLocaleString('es-MX')} MXN`;
         }
 
-        function simularPago(e) {
+        async function procesarCompra(e) {
             e.preventDefault();
+            const btn = document.getElementById('btn-pagar');
             
-            // Efectos de carga visual
-            const btnText = document.getElementById('btn-text');
-            const btnLoader = document.getElementById('btn-loader');
-            const btnPay = document.getElementById('btn-pay');
-            
-            btnText.innerText = "Procesando...";
-            btnLoader.classList.remove('hidden');
-            btnPay.classList.add('opacity-80', 'cursor-not-allowed');
-            btnPay.disabled = true;
+            const nombre = document.getElementById('chk-nombre').value;
+            const email = document.getElementById('chk-email').value;
+            const telefono = document.getElementById('chk-telefono').value;
+            const direccion = document.getElementById('chk-direccion').value;
+            const total = carritoFinal.reduce((ac, item) => ac + (item.precio * item.amount), 0);
 
-            // Simular espera de banco (2.5 segundos)
-            setTimeout(() => {
-                // Limpiar el carrito porque ya compró
+            btn.innerText = "PROCESANDO...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            try {
+                // 1. Guardar en Supabase
+                const { data, error } = await db.from('pedidos').insert([{
+                    nombre: nombre,
+                    email: email,
+                    telefono: telefono,
+                    direccion: direccion,
+                    total: total,
+                    productos: carritoFinal
+                }]);
+
+                if (error) throw error;
+
+                // (Aquí conectaremos el envío de correo en el próximo paso)
+
+                // 2. Limpiar carrito y mostrar éxito
                 localStorage.removeItem('alcantarillaCart');
+                document.getElementById('success-screen').classList.remove('hidden');
+                document.getElementById('success-screen').classList.add('flex');
 
-                // Mostrar ventana de éxito
-                const modal = document.getElementById('success-modal');
-                const content = document.getElementById('success-content');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                setTimeout(() => {
-                    content.classList.remove('scale-95', 'opacity-0');
-                    content.classList.add('scale-100', 'opacity-100');
-                }, 10);
-            }, 2500);
-        }
-
-        function finalizarCompra() {
-            window.location.href = 'index.html';
+            } catch(err) {
+                console.error(err);
+                alert("Hubo un problema al procesar tu pedido. Intenta de nuevo.");
+                btn.innerText = "Confirmar Pedido";
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
         }
     </script>
 </body>
