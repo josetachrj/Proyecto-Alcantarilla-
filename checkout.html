@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Librerías de Leaflet para el Mapa Interactivo -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         body { 
             font-family: 'Inter', sans-serif; 
@@ -19,11 +24,13 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Aseguramos que el mapa no flote sobre la barra de navegación superior */
+        .leaflet-container { z-index: 10 !important; font-family: 'Inter', sans-serif;}
     </style>
 </head>
 <body class="relative min-h-screen bg-[#050505] flex flex-col">
 
-    <!-- NAVBAR SIMPLE (Sin menús, para enfocar en la compra) -->
+    <!-- NAVBAR SIMPLE -->
     <header class="border-b border-white/10 bg-black/80 backdrop-blur-2xl sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
             <a href="Colecciones.html" class="text-neutral-400 hover:text-white transition flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
@@ -31,14 +38,14 @@
                 Volver a la tienda
             </a>
             <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="h-12 w-12 object-cover rounded-full border border-white/10">
-            <div class="w-24"></div> <!-- Espaciador -->
+            <div class="w-24"></div>
         </div>
     </header>
 
     <!-- CHECKOUT -->
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-12 grid lg:grid-cols-12 gap-12">
         
-        <!-- FORMULARIO DE DATOS (Columna Izquierda) -->
+        <!-- FORMULARIO DE DATOS -->
         <div class="lg:col-span-7 bg-black/40 p-8 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl h-fit">
             <h1 class="text-2xl font-black uppercase text-white mb-8">Datos de Envío</h1>
             
@@ -59,9 +66,14 @@
                     <input type="tel" id="chk-telefono" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Dirección de Entrega (Calle, Número, Colonia)</label>
-                    <textarea id="chk-direccion" required rows="2" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition no-scrollbar"></textarea>
+                <!-- SECCIÓN DEL MAPA INTERACTIVO -->
+                <div class="bg-[#111] p-4 rounded-xl border border-white/10">
+                    <label class="block text-xs font-bold text-[#b91c1c] uppercase mb-1">📍 Ubicación Exacta (GPS)</label>
+                    <p class="text-[10px] text-neutral-400 mb-3">Mueve el mapa o arrastra el marcador rojo justo hasta la puerta de tu casa.</p>
+                    
+                    <div id="mapa-ubicacion" class="w-full h-64 rounded-lg bg-white/5 border border-white/10 mb-3"></div>
+                    
+                    <input type="text" id="chk-direccion" required placeholder="Referencias (Ej. Casa con zaguán negro, Depto 4B)" class="w-full bg-black/50 border border-white/10 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-[#b91c1c] transition">
                 </div>
 
                 <div class="pt-6 border-t border-white/10">
@@ -71,10 +83,9 @@
             </form>
         </div>
 
-        <!-- RESUMEN DEL PEDIDO (Columna Derecha) -->
+        <!-- RESUMEN DEL PEDIDO -->
         <div class="lg:col-span-5 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-xl h-fit sticky top-28">
             <h2 class="text-lg font-black uppercase text-white mb-6">Tu Orden</h2>
-            
             <div id="checkout-items" class="space-y-4 mb-6 max-h-[40vh] overflow-y-auto no-scrollbar pr-2">
                 <!-- Se llena con JS -->
             </div>
@@ -104,14 +115,14 @@
             </div>
             <h2 class="text-3xl font-black uppercase text-white mb-4">¡Orden Recibida!</h2>
             <p class="text-neutral-400 text-sm leading-relaxed mb-8">Hemos registrado tu pedido con éxito. En breve recibirás un ticket en tu correo electrónico con las instrucciones de pago y los pasos a seguir.</p>
-            <a href="index.html" class="inline-block bg-white text-black hover:bg-neutral-200 font-black py-3 px-8 rounded-xl uppercase tracking-widest text-xs transition">Volver al Inicio</a>
+            <a href="Colecciones.html" class="inline-block bg-white text-black hover:bg-neutral-200 font-black py-3 px-8 rounded-xl uppercase tracking-widest text-xs transition">Volver al Inicio</a>
         </div>
     </div>
 
     <!-- LOGICA JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // INICIALIZACIÓN EMAILJS (Tu Public Key)
+        // INICIALIZACIÓN EMAILJS
         (function(){ emailjs.init("HYMKvfE1lSTdpNPxQ"); })();
 
         const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
@@ -119,6 +130,11 @@
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         let carritoFinal = JSON.parse(localStorage.getItem('alcantarillaCart')) || [];
+        
+        // Variables Globales para el Mapa
+        let coordenadasGPS = "19.4326,-99.1332"; // Coordenadas por defecto (CDMX)
+        let mapaCliente;
+        let pinCliente;
 
         document.addEventListener('DOMContentLoaded', () => {
             if(carritoFinal.length === 0) {
@@ -127,7 +143,52 @@
                 return;
             }
             renderizarResumen();
+            inicializarMapa();
         });
+
+        // 🗺️ FUNCIÓN DEL MAPA
+        function inicializarMapa() {
+            // Creamos el mapa centrado inicialmente
+            mapaCliente = L.map('mapa-ubicacion').setView([19.4326, -99.1332], 13);
+
+            // Usamos un estilo de mapa oscuro (Dark Matter) para que coincida con tu diseño
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(mapaCliente);
+
+            // Creamos el marcador rojo arrastrable
+            pinCliente = L.marker([19.4326, -99.1332], { draggable: true }).addTo(mapaCliente);
+
+            // Si el cliente arrastra el pin, guardamos las nuevas coordenadas
+            pinCliente.on('dragend', function (e) {
+                const pos = pinCliente.getLatLng();
+                coordenadasGPS = `${pos.lat},${pos.lng}`;
+            });
+
+            // Si el cliente da clic en otro lado del mapa, movemos el pin
+            mapaCliente.on('click', function(e) {
+                pinCliente.setLatLng(e.latlng);
+                coordenadasGPS = `${e.latlng.lat},${e.latlng.lng}`;
+            });
+
+            // Intentamos obtener la ubicación real del usuario mediante GPS
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const nuevaPos = [lat, lng];
+                    
+                    // Centramos el mapa y el pin en la casa del cliente
+                    mapaCliente.setView(nuevaPos, 16);
+                    pinCliente.setLatLng(nuevaPos);
+                    coordenadasGPS = `${lat},${lng}`;
+                }, () => {
+                    console.log("El usuario no permitió acceder a su GPS. Usando ubicación manual.");
+                });
+            }
+        }
 
         function renderizarResumen() {
             const container = document.getElementById('checkout-items');
@@ -158,13 +219,10 @@
             const nombre = document.getElementById('chk-nombre').value;
             const email = document.getElementById('chk-email').value;
             const telefono = document.getElementById('chk-telefono').value;
-            const direccion = document.getElementById('chk-direccion').value;
+            const referencias = document.getElementById('chk-direccion').value; // Ahora son referencias
             const total = carritoFinal.reduce((ac, item) => ac + (item.precio * item.amount), 0);
             
-            // Crea un número de pedido dinámico para el correo
             const orderId = "ALC-" + Math.floor(Math.random() * 100000);
-
-            // Formatea el texto de la lista de productos
             const listaProductos = carritoFinal.map(i => `- ${i.nombre} (Cant: ${i.amount})`).join('\n');
 
             btn.innerText = "PROCESANDO...";
@@ -172,29 +230,30 @@
             btn.classList.add('opacity-50');
 
             try {
-                // 1. Guardar la orden en tu base de datos Supabase
+                // 1. Guardar la orden en Supabase INCLUYENDO LAS COORDENADAS GPS
                 const { error } = await db.from('pedidos').insert([{
                     nombre: nombre,
                     email: email,
                     telefono: telefono,
-                    direccion: direccion,
+                    direccion: referencias, // Guardamos las referencias escritas
+                    coordenadas: coordenadasGPS, // ¡Guardamos el GPS exacto!
                     total: total,
                     productos: carritoFinal
                 }]);
 
                 if (error) throw error;
 
-                // 2. Disparar el correo con EmailJS usando tus claves reales
+                // 2. Disparar el correo (Solo enviamos referencias porque el mapa ya lo tienes tú)
                 await emailjs.send("service_qz3mq7j", "template_ld7a35o", {
                     order_id: orderId,
                     nombre_cliente: nombre,
                     email_cliente: email,
                     lista_productos: listaProductos,
                     total: total,
-                    direccion: direccion
+                    direccion: referencias
                 });
 
-                // 3. Vaciar carrito local y mostrar pantalla de éxito
+                // 3. Éxito
                 localStorage.removeItem('alcantarillaCart');
                 document.getElementById('success-screen').classList.remove('hidden');
                 document.getElementById('success-screen').classList.add('flex');
@@ -202,7 +261,7 @@
             } catch(err) {
                 console.error("Error en la compra:", err);
                 alert("Hubo un problema al procesar tu pedido. Intenta de nuevo.");
-                btn.innerText = "Finalizar Compra";
+                btn.innerText = "Confirmar Pedido";
                 btn.disabled = false;
                 btn.classList.remove('opacity-50');
             }
