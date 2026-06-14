@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin V2.6 - ALCANTARILLA</title>
+    <title>Admin V2.7 - ALCANTARILLA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,11 +21,10 @@
 </head>
 <body class="min-h-screen flex hidden" id="cuerpo-admin">
 
-    <!-- SIDEBAR -->
     <aside class="w-64 border-r border-white/10 bg-[#0a0a0a] flex flex-col p-6 shrink-0">
         <div class="flex items-center gap-3 mb-12">
             <img src="Images/logo2.jpeg" alt="Logo" class="w-10 h-10 rounded-full border border-white/10 object-cover">
-            <h1 class="text-sm font-black uppercase tracking-widest text-white">ADMIN V2.6</h1>
+            <h1 class="text-sm font-black uppercase tracking-widest text-white">ADMIN V2.7</h1>
         </div>
         <nav class="flex flex-col gap-3 flex-grow">
             <button onclick="cambiarSeccion('inventario')" id="btn-inventario" class="bg-[#b91c1c] text-white font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-lg flex items-center gap-2 shadow-lg shadow-red-900/20 transition text-left">
@@ -40,16 +39,13 @@
         </nav>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="flex-1 p-10 overflow-y-auto no-scrollbar">
         <header class="mb-8">
             <h2 id="header-titulo" class="text-3xl font-black uppercase tracking-wider text-white">Gestión de Catálogo</h2>
             <p id="header-desc" class="text-sm text-neutral-400 mt-1">Sube múltiples vistas de tus prendas directamente a Supabase Storage.</p>
         </header>
 
-        <!-- SECCIÓN 1: INVENTARIO -->
         <div id="seccion-inventario" class="grid grid-cols-1 xl:grid-cols-12 gap-8 transition-opacity duration-300">
-            <!-- Formulario Subir Prenda -->
             <div class="xl:col-span-5 bg-[#111111] border border-white/10 rounded-2xl p-6 shadow-2xl h-fit">
                 <h3 class="text-xs font-bold text-[#b91c1c] mb-6 uppercase tracking-widest border-b border-white/5 pb-4">Añadir Nueva Prenda</h3>
                 <form id="form-subir" class="space-y-5">
@@ -89,7 +85,6 @@
                 </form>
             </div>
 
-            <!-- Tabla Inventario -->
             <div class="xl:col-span-7 bg-[#111111] border border-white/10 rounded-2xl p-6 shadow-2xl h-fit">
                 <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
                     <h3 class="text-xs font-bold text-white uppercase tracking-widest">Inventario Activo</h3>
@@ -116,11 +111,8 @@
             </div>
         </div>
 
-        <!-- SECCIÓN 2: PEDIDOS (Oculta por defecto) -->
         <div id="seccion-pedidos" class="hidden flex-col gap-6 transition-opacity duration-300">
-            <!-- PANEL DE MÉTRICAS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Tarjeta Ingresos -->
                 <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -130,7 +122,6 @@
                         <h4 id="metric-ingresos" class="text-2xl font-black text-white mt-1">$0</h4>
                     </div>
                 </div>
-                <!-- Tarjeta Pendientes -->
                 <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -140,7 +131,6 @@
                         <h4 id="metric-pendientes" class="text-2xl font-black text-white mt-1">0</h4>
                     </div>
                 </div>
-                <!-- Tarjeta Prendas -->
                 <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-[#b91c1c]/10 flex items-center justify-center text-[#b91c1c]">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
@@ -152,15 +142,24 @@
                 </div>
             </div>
 
-            <!-- TABLA DE PEDIDOS -->
             <div class="bg-[#111111] border border-white/10 rounded-2xl p-6 shadow-2xl w-full">
-                <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/5 pb-4 mb-6">
                     <h3 class="text-xs font-bold text-white uppercase tracking-widest">Ventas y Órdenes Recientes</h3>
-                    <button onclick="cargarPedidos()" class="text-[10px] text-[#b91c1c] hover:text-white uppercase flex items-center gap-1 font-bold transition">
+                    <button onclick="cargarPedidos()" class="text-[10px] text-[#b91c1c] hover:text-white uppercase flex items-center gap-1 font-bold transition self-end sm:self-auto">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                         Sincronizar Pedidos
                     </button>
                 </div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <input type="text" id="buscar-pedido" oninput="window.filtrarPedidosUI()" placeholder="Buscar por cliente, correo o teléfono..." class="w-full md:w-80 bg-[#0a0a0a] border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-[#b91c1c] transition shadow-inner">
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.cambiarFiltroEstado('todos')" id="filter-btn-todos" class="px-4 py-2.5 bg-[#b91c1c] text-white text-[10px] font-black uppercase tracking-wider rounded-lg transition shadow-md shadow-red-900/10">Todos</button>
+                        <button onclick="window.cambiarFiltroEstado('pendiente')" id="filter-btn-pendiente" class="px-4 py-2.5 bg-white/5 text-neutral-400 text-[10px] font-black uppercase tracking-wider rounded-lg transition hover:text-white">Pendientes</button>
+                        <button onclick="window.cambiarFiltroEstado('enviado')" id="filter-btn-enviado" class="px-4 py-2.5 bg-white/5 text-neutral-400 text-[10px] font-black uppercase tracking-wider rounded-lg transition hover:text-white">Enviados</button>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs whitespace-nowrap">
                         <thead class="text-[10px] text-neutral-500 uppercase tracking-widest bg-white/5">
@@ -183,7 +182,6 @@
         </div>
     </main>
 
-    <!-- Modal Detalles del Pedido V2 (Gigante) -->
     <div id="modal-pedido" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-50 p-4">
         <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 w-full max-w-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] relative flex flex-col max-h-[90vh]">
             <button onclick="cerrarModalPedido()" class="absolute top-6 right-6 bg-white/10 p-2.5 rounded-full text-neutral-400 hover:text-white hover:bg-[#b91c1c] transition z-10">
@@ -191,15 +189,13 @@
             </button>
             <h3 class="text-xl font-black text-[#b91c1c] uppercase tracking-widest mb-6 border-b border-white/10 pb-4 shrink-0">Ticket de Compra Detallado</h3>
             <div id="contenido-modal-pedido" class="space-y-4 overflow-y-auto no-scrollbar pr-2 flex-grow">
-                <!-- Se llena con JS -->
-            </div>
+                </div>
             <div class="mt-6 pt-6 border-t border-white/10 text-right shrink-0">
                 <button onclick="cerrarModalPedido()" class="bg-white/10 hover:bg-white/20 text-white text-sm font-bold py-3 px-8 rounded-xl uppercase tracking-wider transition">Cerrar Panel</button>
             </div>
         </div>
     </div>
 
-    <!-- Contenedor Toasts -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
     <script>
@@ -208,6 +204,10 @@
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         const CORREO_ADMIN = 'shopalcantarilla@gmail.com'.toLowerCase(); 
+        
+        // Memoria caché para hacer la búsqueda instantánea sin saturar Supabase
+        window.pedidosCache = [];
+        window.filtroEstadoActual = 'todos';
 
         async function verificarAdmin() {
             const { data: { user } } = await db.auth.getUser();
@@ -280,6 +280,7 @@
             }
         }
 
+        // Carga los datos de Supabase y calcula las métricas globales
         async function cargarPedidos() {
             const tbody = document.getElementById('tabla-pedidos');
             tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500 font-mono">Sincronizando base de datos...</td></tr>';
@@ -288,72 +289,128 @@
                 const { data, error } = await db.from('pedidos').select('*').order('creado_en', { ascending: false });
                 if (error) throw error;
 
+                window.pedidosCache = data; // Respaldamos los datos en memoria
+
                 let totalIngresos = 0;
                 let pedidosPendientes = 0;
                 let totalPrendasVendidas = 0;
 
                 if (data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500">Aún no hay pedidos registrados.</td></tr>';
-                    document.getElementById('metric-ingresos').innerText = '$0 MXN';
+                    document.getElementById('metric-ingresos').innerText = '$0';
                     document.getElementById('metric-pendientes').innerText = '0';
                     document.getElementById('metric-prendas').innerText = '0 pz';
                     return;
                 }
 
-                tbody.innerHTML = data.map(p => {
-                    const fecha = new Date(p.creado_en).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                // Las métricas se calculan SIEMPRE sobre el total de la base de datos
+                data.forEach(p => {
                     const isEnviado = p.estado && p.estado.toLowerCase() === 'enviado';
-                    const badgeClass = isEnviado ? "bg-green-500/20 text-green-500 border-green-500/30" : "bg-yellow-500/20 text-yellow-500 border-yellow-500/30";
-                    
                     totalIngresos += parseFloat(p.total) || 0;
                     if (!isEnviado) pedidosPendientes++;
-                    
-                    const prodEncoded = encodeURIComponent(typeof p.productos === 'string' ? p.productos : JSON.stringify(p.productos));
                     
                     try {
                         const productosObj = typeof p.productos === 'string' ? JSON.parse(p.productos) : p.productos;
                         productosObj.forEach(item => { totalPrendasVendidas += parseInt(item.amount) || 0; });
                     } catch(e) {}
-
-                    let btnMapa = '';
-                    if (p.coordenadas) {
-                        btnMapa = `<a href="https://www.google.com/maps?q=${p.coordenadas}" target="_blank" class="block mt-2 bg-[#b91c1c]/20 hover:bg-[#b91c1c] text-[#b91c1c] hover:text-white border border-[#b91c1c]/50 text-center py-1 rounded text-[10px] font-bold uppercase transition">📍 Abrir Maps</a>`;
-                    }
-
-                    return `
-                    <tr class="hover:bg-white/5 transition border-b border-white/5 last:border-0">
-                        <td class="p-3 font-mono text-[10px] text-neutral-400">${fecha}</td>
-                        <td class="p-3 font-bold text-white capitalize">${p.nombre}</td>
-                        <td class="p-3 text-[10px] text-neutral-300">
-                            <div>${p.telefono || 'Sin tel'}</div>
-                            <div class="text-neutral-500">${p.email}</div>
-                        </td>
-                        <td class="p-3 text-[10px] text-neutral-400 max-w-[150px]">
-                            <div class="truncate" title="${p.direccion}">${p.direccion}</div>
-                            ${btnMapa}
-                        </td>
-                        <td class="p-3 font-bold text-[#b91c1c]">$${p.total.toLocaleString('es-MX')}</td>
-                        <td class="p-3">
-                            <span class="text-[9px] uppercase tracking-wider font-bold px-2 py-1 rounded border ${badgeClass}">
-                                ${p.estado || 'Pendiente'}
-                            </span>
-                        </td>
-                        <td class="p-3 text-center flex items-center justify-center gap-2">
-                            <button onclick="abrirModalPedido('${prodEncoded}')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition">Productos</button>
-                            ${!isEnviado ? `<button onclick="marcarEnviado(${p.id})" class="bg-[#b91c1c] hover:bg-[#dc2626] text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition shadow-lg shadow-red-900/20">Aprobar</button>` : ''}
-                        </td>
-                    </tr>`;
-                }).join('');
+                });
 
                 document.getElementById('metric-ingresos').innerText = '$' + totalIngresos.toLocaleString('es-MX');
                 document.getElementById('metric-pendientes').innerText = pedidosPendientes;
                 document.getElementById('metric-prendas').innerText = totalPrendasVendidas + ' pz';
+
+                // Llamamos a pintar los filtros sobre la interfaz
+                window.filtrarPedidosUI();
 
             } catch (err) {
                 console.error(err);
                 tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-red-500">Error al cargar pedidos. Verifica la consola.</td></tr>';
             }
         }
+
+        // Lógica de pestañas de filtrado de estados
+        window.cambiarFiltroEstado = function(estado) {
+            window.filtroEstadoActual = estado;
+            ['todos', 'pendiente', 'enviado'].forEach(est => {
+                const btn = document.getElementById(`filter-btn-${est}`);
+                if(est === estado) {
+                    btn.className = "px-4 py-2.5 bg-[#b91c1c] text-white text-[10px] font-black uppercase tracking-wider rounded-lg transition shadow-md shadow-red-900/10";
+                } else {
+                    btn.className = "px-4 py-2.5 bg-white/5 text-neutral-400 text-[10px] font-black uppercase tracking-wider rounded-lg transition hover:text-white";
+                }
+            });
+            window.filtrarPedidosUI();
+        };
+
+        // Combina el buscador de texto y los botones de estado
+        window.filtrarPedidosUI = function() {
+            const tbody = document.getElementById('tabla-pedidos');
+            const termino = document.getElementById('buscar-pedido').value.toLowerCase().trim();
+            
+            let listaFiltrada = window.pedidosCache;
+
+            // 1. Filtrar por Botón de Estado (Todos / Pendiente / Enviado)
+            if (window.filtroEstadoActual !== 'todos') {
+                listaFiltrada = listaFiltrada.filter(p => {
+                    const est = (p.estado || 'pendiente').toLowerCase();
+                    return est === window.filtroEstadoActual;
+                });
+            }
+
+            // 2. Filtrar por el término escrito en la barra de búsqueda
+            if (termino) {
+                listaFiltrada = listaFiltrada.filter(p => {
+                    const nombre = (p.nombre || '').toLowerCase();
+                    const email = (p.email || '').toLowerCase();
+                    const tel = (p.telefono || '').toLowerCase();
+                    const dir = (p.direccion || '').toLowerCase();
+                    return nombre.includes(termino) || email.includes(termino) || tel.includes(termino) || dir.includes(termino);
+                });
+            }
+
+            if (listaFiltrada.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500 font-mono">No se encontraron órdenes coincidentes.</td></tr>';
+                return;
+            }
+
+            // 3. Pintar los resultados filtrados
+            tbody.innerHTML = listaFiltrada.map(p => {
+                const fecha = new Date(p.creado_en).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                const isEnviado = p.estado && p.estado.toLowerCase() === 'enviado';
+                const badgeClass = isEnviado ? "bg-green-500/20 text-green-500 border-green-500/30" : "bg-yellow-500/20 text-yellow-500 border-yellow-500/30";
+                
+                const prodEncoded = encodeURIComponent(typeof p.productos === 'string' ? p.productos : JSON.stringify(p.productos));
+
+                let btnMapa = '';
+                if (p.coordenadas) {
+                    btnMapa = `<a href="http://googleusercontent.com/maps.google.com/maps?q=${p.coordenadas}" target="_blank" class="block mt-2 bg-[#b91c1c]/20 hover:bg-[#b91c1c] text-[#b91c1c] hover:text-white border border-[#b91c1c]/50 text-center py-1 rounded text-[10px] font-bold uppercase transition">📍 Abrir Maps</a>`;
+                }
+
+                return `
+                <tr class="hover:bg-white/5 transition border-b border-white/5 last:border-0">
+                    <td class="p-3 font-mono text-[10px] text-neutral-400">${fecha}</td>
+                    <td class="p-3 font-bold text-white capitalize">${p.nombre}</td>
+                    <td class="p-3 text-[10px] text-neutral-300">
+                        <div>${p.telefono || 'Sin tel'}</div>
+                        <div class="text-neutral-500">${p.email}</div>
+                    </td>
+                    <td class="p-3 text-[10px] text-neutral-400 max-w-[150px]">
+                        <div class="truncate" title="${p.direccion}">${p.direccion}</div>
+                        ${btnMapa}
+                    </td>
+                    <td class="p-3 font-bold text-[#b91c1c]">$${p.total.toLocaleString('es-MX')}</td>
+                    <td class="p-3">
+                        <span class="text-[9px] uppercase tracking-wider font-bold px-2 py-1 rounded border ${badgeClass}">
+                            ${p.estado || 'Pendiente'}
+                        </span>
+                    </td>
+                    <td class="p-3 text-center flex items-center justify-center gap-2">
+                        <button onclick="abrirModalPedido('${prodEncoded}')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition">Productos</button>
+                        ${!isEnviado ? `<button onclick="marcarEnviado(${p.id})" class="bg-[#b91c1c] hover:bg-[#dc2626] text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition shadow-lg shadow-red-900/20">Aprobar</button>` : ''}
+                    </td>
+                </tr>`;
+            }).join('');
+        };
 
         function abrirModalPedido(productosEncoded) {
             const container = document.getElementById('contenido-modal-pedido');
