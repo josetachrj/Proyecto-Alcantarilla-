@@ -269,7 +269,7 @@
             }
         }
 
-        // 5. Cargar la Tabla de Pedidos (NUEVO)
+       // 5. Cargar la Tabla de Pedidos (Con Mapa GPS)
         async function cargarPedidos() {
             const tbody = document.getElementById('tabla-pedidos');
             tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500 font-mono">Sincronizando base de datos...</td></tr>';
@@ -288,8 +288,13 @@
                     const isEnviado = p.estado && p.estado.toLowerCase() === 'enviado';
                     const badgeClass = isEnviado ? "bg-green-500/20 text-green-500 border-green-500/30" : "bg-yellow-500/20 text-yellow-500 border-yellow-500/30";
                     
-                    // Escapamos los datos JSON para pasarlos al botón de forma segura
                     const prodJSON = encodeURIComponent(typeof p.productos === 'string' ? p.productos : JSON.stringify(p.productos));
+
+                    // Botón de Google Maps si hay coordenadas
+                    let btnMapa = '';
+                    if (p.coordenadas) {
+                        btnMapa = `<a href="https://www.google.com/maps?q=${p.coordenadas}" target="_blank" class="block mt-2 bg-[#b91c1c]/20 hover:bg-[#b91c1c] text-[#b91c1c] hover:text-white border border-[#b91c1c]/50 text-center py-1 rounded text-[10px] font-bold uppercase transition">📍 Abrir Maps</a>`;
+                    }
 
                     return `
                     <tr class="hover:bg-white/5 transition border-b border-white/5 last:border-0">
@@ -299,7 +304,10 @@
                             <div>${p.telefono || 'Sin tel'}</div>
                             <div class="text-neutral-500">${p.email}</div>
                         </td>
-                        <td class="p-3 text-[10px] text-neutral-400 truncate max-w-[150px]" title="${p.direccion}">${p.direccion}</td>
+                        <td class="p-3 text-[10px] text-neutral-400 max-w-[150px]">
+                            <div class="truncate" title="${p.direccion}">${p.direccion}</div>
+                            ${btnMapa}
+                        </td>
                         <td class="p-3 font-bold text-[#b91c1c]">$${p.total.toLocaleString('es-MX')}</td>
                         <td class="p-3">
                             <span class="text-[9px] uppercase tracking-wider font-bold px-2 py-1 rounded border ${badgeClass}">
@@ -317,7 +325,6 @@
                 tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-red-500">Error al cargar pedidos. Verifica la consola.</td></tr>';
             }
         }
-
 // Lógica del Modal de Pedidos (Fotos Grandes)
         function abrirModalPedido(productosEncoded) {
             const container = document.getElementById('contenido-modal-pedido');
