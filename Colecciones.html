@@ -308,7 +308,6 @@
             { nombre_mostrar: "Carlos M.", texto: "La chamarra superó mis expectativas. El fit es perfecto.", estrellas: 5, compra_verificada: true }
         ];
 
-        // FUNCION MAESTRA PARA CERRAR TODO (MODALES, MENUS Y OVERLAYS) DE FORMA SEGURA
         window.closeAllDrawers = function() {
             try {
                 document.getElementById('cart-drawer')?.classList.add('translate-x-full');
@@ -323,10 +322,7 @@
                 document.getElementById('review-modal')?.classList.remove('flex');
                 
                 const qvModal = document.getElementById('quick-view-modal');
-                if(qvModal) {
-                    qvModal.classList.add('hidden'); 
-                    qvModal.classList.remove('flex');
-                }
+                if(qvModal) { qvModal.classList.add('hidden'); qvModal.classList.remove('flex'); }
             } catch(e) { console.error(e); }
         };
 
@@ -342,9 +338,7 @@
                 drawer.classList.remove('translate-x-full', '-translate-x-full'); 
                 overlay.classList.remove('pointer-events-none', 'opacity-0'); 
                 overlay.classList.add('opacity-100');
-            } else { 
-                window.closeAllDrawers(); 
-            }
+            } else { window.closeAllDrawers(); }
         };
 
         window.toggleCartDrawer = function() { window.toggleDrawerGeneric('cart-drawer'); };
@@ -374,12 +368,10 @@
         window.toggleFilterSize = function(btn, talla) {
             if(window.filtroTallas.includes(talla)) {
                 window.filtroTallas = window.filtroTallas.filter(t => t !== talla);
-                btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]');
-                btn.classList.add('bg-white/5', 'border-white/10');
+                btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]'); btn.classList.add('bg-white/5', 'border-white/10');
             } else {
                 window.filtroTallas.push(talla);
-                btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]');
-                btn.classList.remove('bg-white/5', 'border-white/10');
+                btn.classList.add('bg-[#b91c1c]', 'border-[#b91c1c]'); btn.classList.remove('bg-white/5', 'border-white/10');
             }
         };
 
@@ -388,29 +380,20 @@
                 const checkboxes = document.querySelectorAll('.cat-filter');
                 let keywords = [];
                 checkboxes.forEach(chk => { if(chk.checked) keywords.push(...chk.value.split(',')); });
-
                 let filtrados = window.catalogo;
-
                 if(keywords.length > 0) {
                     filtrados = filtrados.filter(prod => {
                         const nombreMinuscula = (prod.nombre || '').toLowerCase();
                         return keywords.some(kw => nombreMinuscula.includes(kw));
                     });
                 }
-
                 if(window.filtroTallas.length > 0) {
-                    filtrados = filtrados.filter(prod => {
-                        return window.filtroTallas.some(talla => (prod.stock[talla] > 0));
-                    });
+                    filtrados = filtrados.filter(prod => { return window.filtroTallas.some(talla => (prod.stock[talla] > 0)); });
                 }
-
                 window.renderProductosColecciones(filtrados);
                 window.closeAllDrawers();
                 window.showToast('Filtros', `Encontramos ${filtrados.length} piezas.`);
-            } catch (err) {
-                console.error("Error al aplicar filtros:", err);
-                window.closeAllDrawers(); 
-            }
+            } catch (err) { console.error("Error al aplicar filtros:", err); window.closeAllDrawers(); }
         };
 
         window.limpiarFiltros = function() {
@@ -421,18 +404,14 @@
                 if(panelFiltros) {
                     panelFiltros.querySelectorAll('button').forEach(btn => {
                         if(btn.innerText === 'XS' || btn.innerText === 'S' || btn.innerText === 'M' || btn.innerText === 'G' || btn.innerText === 'XL') {
-                            btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]');
-                            btn.classList.add('bg-white/5', 'border-white/10');
+                            btn.classList.remove('bg-[#b91c1c]', 'border-[#b91c1c]'); btn.classList.add('bg-white/5', 'border-white/10');
                         }
                     });
                 }
                 window.renderProductosColecciones(window.catalogo);
                 window.closeAllDrawers();
                 window.showToast('Filtros', 'Filtros eliminados.');
-            } catch(err) {
-                console.error("Error al limpiar filtros:", err);
-                window.closeAllDrawers(); 
-            }
+            } catch(err) { console.error("Error al limpiar filtros:", err); window.closeAllDrawers(); }
         };
 
         window.cargarCatalogoSupabase = async function() {
@@ -450,6 +429,18 @@
             }
         };
 
+        // --- INTELIGENCIA DE TALLA ---
+        // Esta función busca la primera talla que tenga piezas disponibles
+        window.obtenerPrimeraTallaDisponible = function(prod) {
+            if (!prod || !prod.stock) return 'M';
+            if (prod.stock.M > 0) return 'M';
+            if (prod.stock.G > 0) return 'G';
+            if (prod.stock.S > 0) return 'S';
+            if (prod.stock.XL > 0) return 'XL';
+            if (prod.stock.XS > 0) return 'XS';
+            return 'M'; // Fallback por defecto si todo está en 0
+        };
+
         window.renderProductosColecciones = function(listaARenderizar = window.catalogo) {
             const container = document.getElementById('productos-grid');
             if(!container) return;
@@ -464,10 +455,20 @@
                 const stockTotal = prod.stock.XS + prod.stock.S + prod.stock.M + prod.stock.G + prod.stock.XL;
                 const isAgotado = stockTotal === 0;
                 
-                // SEGURIDAD PARA COMILLAS EN LOS NOMBRES O DATOS VACÍOS
                 const safeName = (prod.nombre || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 const safeImgFront = prod.imagen || '';
                 const safeImgBack = prod.imagen_espalda || '';
+
+                // Asignamos inteligentemente la primera talla disponible a este producto
+                const primeraDisponible = window.tallasSeleccionadas[prod.id] || window.obtenerPrimeraTallaDisponible(prod);
+                window.tallasSeleccionadas[prod.id] = primeraDisponible; // Guardamos la decisión para que funcione "Agregar al Carrito"
+
+                // Función auxiliar para pintar los botones de tallas correctamente
+                const getBtnClass = (talla) => {
+                    if (prod.stock[talla] === 0) return 'opacity-30 cursor-not-allowed line-through bg-white/5 border-white/10 text-white';
+                    if (primeraDisponible === talla) return 'bg-[#b91c1c] border-[#b91c1c] text-white talla-activa hover:bg-[#dc2626]';
+                    return 'bg-white/5 border-white/10 text-white hover:bg-white/20';
+                };
 
                 return `
                 <div class="bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col justify-between transition duration-300 relative shadow-xl hover:border-white/30 backdrop-blur-lg ${isAgotado ? 'opacity-50 grayscale' : ''}">
@@ -484,11 +485,11 @@
                         <h3 class="text-white font-semibold text-sm truncate">${prod.nombre}</h3>
                         <p class="text-[#b91c1c] font-bold mt-1 mb-3">$${prod.precio.toLocaleString('es-MX')} MXN</p>
                         <div class="flex flex-wrap gap-1.5 mb-4 t-container-${prod.id} z-20 relative">
-                            <button onclick="window.seleccionarTalla(${prod.id}, 'XS')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XS === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XS === 0 ? 'disabled' : ''}>XS</button>
-                            <button onclick="window.seleccionarTalla(${prod.id}, 'S')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.S === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.S === 0 ? 'disabled' : ''}>S</button>
-                            <button onclick="window.seleccionarTalla(${prod.id}, 'M')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white transition ${prod.stock.M === 0 ? 'opacity-30 cursor-not-allowed line-through' : 'talla-activa'}" ${prod.stock.M === 0 ? 'disabled' : ''}>M</button>
-                            <button onclick="window.seleccionarTalla(${prod.id}, 'G')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.G === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.G === 0 ? 'disabled' : ''}>G</button>
-                            <button onclick="window.seleccionarTalla(${prod.id}, 'XL')" class="w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition ${prod.stock.XL === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${prod.stock.XL === 0 ? 'disabled' : ''}>XL</button>
+                            <button onclick="window.seleccionarTalla(${prod.id}, 'XS')" class="w-8 h-8 text-[10px] font-bold rounded transition ${getBtnClass('XS')}" ${prod.stock.XS === 0 ? 'disabled' : ''}>XS</button>
+                            <button onclick="window.seleccionarTalla(${prod.id}, 'S')"  class="w-8 h-8 text-[10px] font-bold rounded transition ${getBtnClass('S')}"  ${prod.stock.S === 0 ? 'disabled' : ''}>S</button>
+                            <button onclick="window.seleccionarTalla(${prod.id}, 'M')"  class="w-8 h-8 text-[10px] font-bold rounded transition ${getBtnClass('M')}"  ${prod.stock.M === 0 ? 'disabled' : ''}>M</button>
+                            <button onclick="window.seleccionarTalla(${prod.id}, 'G')"  class="w-8 h-8 text-[10px] font-bold rounded transition ${getBtnClass('G')}"  ${prod.stock.G === 0 ? 'disabled' : ''}>G</button>
+                            <button onclick="window.seleccionarTalla(${prod.id}, 'XL')" class="w-8 h-8 text-[10px] font-bold rounded transition ${getBtnClass('XL')}" ${prod.stock.XL === 0 ? 'disabled' : ''}>XL</button>
                         </div>
                     </div>
                     <button onclick="window.agregarAlCarritoConTalla(${prod.id}, '${safeName}', ${prod.precio}, '${prod.imagen}')" ${isAgotado ? "disabled" : ""} class="w-full font-bold py-2 rounded text-[11px] uppercase tracking-wider transition duration-300 z-20 relative ${isAgotado ? "bg-neutral-800 text-neutral-500 cursor-not-allowed border border-white/10" : "bg-white text-black hover:bg-[#b91c1c] hover:text-white"}">${isAgotado ? "Agotado" : "Agregar al Carrito"}</button>
@@ -518,9 +519,7 @@
                             <p class="text-xs text-neutral-400 font-medium">— ${r.nombre_mostrar} ${verifiedTag}</p>
                         </div>`;
                 }).join('');
-            } catch (err) {
-                container.innerHTML = '<p class="text-neutral-500 font-mono text-center col-span-full text-xs">No se pudieron cargar opiniones.</p>';
-            }
+            } catch (err) { container.innerHTML = '<p class="text-neutral-500 font-mono text-center col-span-full text-xs">No se pudieron cargar opiniones.</p>'; }
         };
 
         window.submitReview = async function(e) {
@@ -538,19 +537,18 @@
                 e.target.reset(); 
                 window.closeAllDrawers();
                 window.cargarResenasSupabase(); 
-            } catch (err) {
-                window.showToast('Error', 'No se pudo subir tu opinión.');
-            } finally {
-                btn.innerText = "Publicar Reseña"; btn.disabled = false; btn.classList.remove('opacity-50');
-            }
+            } catch (err) { window.showToast('Error', 'No se pudo subir tu opinión.');
+            } finally { btn.innerText = "Publicar Reseña"; btn.disabled = false; btn.classList.remove('opacity-50'); }
         };
 
-        // LA FUNCIÓN VISTA RÁPIDA CORREGIDA
         window.openQuickView = function(id, name, price, imgFront, imgBack) {
-            window.qvActiveId = id; window.qvActiveTalla = window.tallasSeleccionadas[id] || 'M';
-            window.currentFrontImg = imgFront; 
+            const producto = window.catalogo.find(p => p.id === id);
             
-            // Verificamos de forma segura si realmente tiene una foto de espalda válida
+            // Usamos la misma inteligencia para la Vista Rápida
+            window.qvActiveId = id; 
+            window.qvActiveTalla = window.tallasSeleccionadas[id] || window.obtenerPrimeraTallaDisponible(producto);
+            
+            window.currentFrontImg = imgFront; 
             const tieneEspalda = (imgBack && imgBack.trim() !== '' && imgBack !== 'null');
             window.currentBackImg = tieneEspalda ? imgBack : imgFront;
 
@@ -565,18 +563,15 @@
                 imgEl.onmouseenter = () => { imgEl.style.opacity = 0.5; setTimeout(() => { imgEl.src = window.currentBackImg; imgEl.style.opacity = 1; }, 150); };
                 imgEl.onmouseleave = () => { imgEl.style.opacity = 0.5; setTimeout(() => { imgEl.src = window.currentFrontImg; imgEl.style.opacity = 1; }, 150); };
                 imgEl.onclick = () => { imgEl.style.opacity = 0.5; setTimeout(() => { imgEl.src = imgEl.src === window.currentFrontImg ? window.currentBackImg : window.currentFrontImg; imgEl.style.opacity = 1; }, 150); };
-            } else {
-                hint.classList.add('hidden'); imgEl.onmouseenter = null; imgEl.onmouseleave = null; imgEl.onclick = null;
-            }
+            } else { hint.classList.add('hidden'); imgEl.onmouseenter = null; imgEl.onmouseleave = null; imgEl.onclick = null; }
 
-            const producto = window.catalogo.find(p => p.id === id);
             if(producto && producto.stock) {
                 document.getElementById('qv-sizes').innerHTML = `
-                    <button onclick="window.selectQVTalla('XS')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.XS === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.XS === 0 ? 'disabled' : ''}>XS</button>
-                    <button onclick="window.selectQVTalla('S')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.S === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.S === 0 ? 'disabled' : ''}>S</button>
-                    <button onclick="window.selectQVTalla('M')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.M === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.M === 0 ? 'disabled' : ''}>M</button>
-                    <button onclick="window.selectQVTalla('G')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.G === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.G === 0 ? 'disabled' : ''}>G</button>
-                    <button onclick="window.selectQVTalla('XL')" class="qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition ${producto.stock.XL === 0 ? 'opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.XL === 0 ? 'disabled' : ''}>XL</button>`;
+                    <button onclick="window.selectQVTalla('XS')" class="qv-talla-btn w-9 h-9 border text-xs font-bold rounded transition ${producto.stock.XS === 0 ? 'bg-white/5 border-white/10 text-white opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.XS === 0 ? 'disabled' : ''}>XS</button>
+                    <button onclick="window.selectQVTalla('S')"  class="qv-talla-btn w-9 h-9 border text-xs font-bold rounded transition ${producto.stock.S === 0 ? 'bg-white/5 border-white/10 text-white opacity-30 cursor-not-allowed line-through' : ''}"  ${producto.stock.S === 0 ? 'disabled' : ''}>S</button>
+                    <button onclick="window.selectQVTalla('M')"  class="qv-talla-btn w-9 h-9 border text-xs font-bold rounded transition ${producto.stock.M === 0 ? 'bg-white/5 border-white/10 text-white opacity-30 cursor-not-allowed line-through' : ''}"  ${producto.stock.M === 0 ? 'disabled' : ''}>M</button>
+                    <button onclick="window.selectQVTalla('G')"  class="qv-talla-btn w-9 h-9 border text-xs font-bold rounded transition ${producto.stock.G === 0 ? 'bg-white/5 border-white/10 text-white opacity-30 cursor-not-allowed line-through' : ''}"  ${producto.stock.G === 0 ? 'disabled' : ''}>G</button>
+                    <button onclick="window.selectQVTalla('XL')" class="qv-talla-btn w-9 h-9 border text-xs font-bold rounded transition ${producto.stock.XL === 0 ? 'bg-white/5 border-white/10 text-white opacity-30 cursor-not-allowed line-through' : ''}" ${producto.stock.XL === 0 ? 'disabled' : ''}>XL</button>`;
             }
             window.selectQVTalla(window.qvActiveTalla);
 
@@ -599,8 +594,8 @@
             window.qvActiveTalla = talla; window.seleccionarTalla(window.qvActiveId, talla); 
             document.querySelectorAll('.qv-talla-btn').forEach(btn => {
                 if(btn.disabled) return;
-                if(btn.innerText === talla) { btn.className = "qv-talla-btn w-9 h-9 bg-[#b91c1c] border-[#b91c1c] text-xs font-bold rounded text-white talla-activa transition"; } 
-                else { btn.className = "qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition"; }
+                if(btn.innerText === talla) { btn.className = "qv-talla-btn w-9 h-9 bg-[#b91c1c] border-[#b91c1c] text-xs font-bold rounded text-white talla-activa transition hover:bg-[#dc2626]"; } 
+                else { btn.className = "qv-talla-btn w-9 h-9 bg-white/5 border border-white/10 text-xs font-bold rounded text-white transition hover:bg-white/20"; }
             });
         };
 
@@ -649,8 +644,8 @@
             window.tallasSeleccionadas[productoId] = talla;
             document.querySelectorAll(`.t-container-${productoId}`).forEach(contenedor => {
                 for (let btn of contenedor.getElementsByTagName('button')) { 
-                    if(btn.disabled) continue;
-                    if(btn.innerText === talla) { btn.className = "w-8 h-8 bg-[#b91c1c] border-[#b91c1c] text-[10px] font-bold rounded text-white talla-activa transition"; } 
+                    if(btn.disabled) continue; // Ignoramos las tallas agotadas para no cambiarles el color
+                    if(btn.innerText === talla) { btn.className = "w-8 h-8 bg-[#b91c1c] border-[#b91c1c] text-[10px] font-bold rounded text-white talla-activa transition hover:bg-[#dc2626]"; } 
                     else { btn.className = "w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition"; }
                 }
             });
@@ -662,7 +657,7 @@
 
             const itemUniqueId = `${id}-${tallaSelect}`;
             const productoExistente = window.carrito.find(item => item.uniqueId === itemUniqueId);
-            if(productoExistente && productoObj && productoExistente.amount >= productoObj.stock[tallaSelect]) { window.showToast('Aviso', `Máximo de stock alcanzado.`); return; }
+            if(productoExistente && productoObj && productoExistente.amount >= productoObj.stock[tallaSelect]) { window.showToast('Aviso', `No hay más stock disponible.`); return; }
 
             if (productoExistente) { productoExistente.amount += 1; } 
             else { window.carrito.push({ uniqueId: itemUniqueId, id, nombre: `${nombre} (${tallaSelect})`, precio, imagen, amount: 1 }); }
@@ -676,9 +671,9 @@
             let talla = window.tallasSeleccionadas[id];
             if(!talla) {
                 const p = window.catalogo.find(prod => prod.id === id);
-                if(p) talla = p.stock.M > 0 ? 'M' : p.stock.G > 0 ? 'G' : p.stock.S > 0 ? 'S' : p.stock.XL > 0 ? 'XL' : p.stock.XS > 0 ? 'XS' : 'M';
+                talla = window.obtenerPrimeraTallaDisponible(p);
             }
-            window.agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, talla || 'M');
+            window.agregarAlCarritoConTallaDirecto(id, nombre, precio, imagen, talla);
         };
 
         window.cambiarCantidad = function(uniqueId, cambio) {
@@ -722,7 +717,6 @@
                 </div>`).join('');
         };
 
-        // INICIO FINAL
         document.addEventListener('DOMContentLoaded', () => {
             const btnOpenReview = document.getElementById('btn-open-review');
             if (btnOpenReview) btnOpenReview.addEventListener('click', () => { window.openReviewModal(); });
