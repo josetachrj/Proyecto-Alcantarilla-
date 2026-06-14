@@ -127,6 +127,42 @@
 
         <!-- SECCIÓN 2: PEDIDOS (Oculta por defecto) -->
         <div id="seccion-pedidos" class="hidden flex-col gap-6 transition-opacity duration-300">
+            
+            <!-- PANEL DE MÉTRICAS (NUEVO) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Tarjeta Ingresos -->
+                <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Ingresos Totales</p>
+                        <h4 id="metric-ingresos" class="text-2xl font-black text-white mt-1">$0</h4>
+                    </div>
+                </div>
+                <!-- Tarjeta Pendientes -->
+                <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Por Aprobar / Enviar</p>
+                        <h4 id="metric-pendientes" class="text-2xl font-black text-white mt-1">0</h4>
+                    </div>
+                </div>
+                <!-- Tarjeta Prendas -->
+                <div class="bg-gradient-to-br from-[#111] to-[#0a0a0a] border border-white/10 rounded-2xl p-6 shadow-xl flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-[#b91c1c]/10 flex items-center justify-center text-[#b91c1c]">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-neutral-500 uppercase tracking-widest font-bold">Prendas Vendidas</p>
+                        <h4 id="metric-prendas" class="text-2xl font-black text-white mt-1">0 pz</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA DE PEDIDOS -->
             <div class="bg-[#111111] border border-white/10 rounded-2xl p-6 shadow-2xl w-full">
                 <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-4">
                     <h3 class="text-xs font-bold text-white uppercase tracking-widest">Ventas y Órdenes Recientes</h3>
@@ -135,29 +171,7 @@
                         Sincronizar Pedidos
                     </button>
                 </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="text-[10px] text-neutral-500 uppercase tracking-widest bg-white/5">
-                            <tr>
-                                <th class="p-3 rounded-tl-lg">Fecha</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Contacto</th>
-                                <th class="p-3">Dirección</th>
-                                <th class="p-3">Total</th>
-                                <th class="p-3">Estado</th>
-                                <th class="p-3 rounded-tr-lg text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-pedidos" class="divide-y divide-white/5 text-neutral-300">
-                            <tr><td colspan="7" class="p-8 text-center text-neutral-500 font-mono">Buscando nuevas órdenes...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
-
+               
  <!-- Modal Detalles del Pedido V2 (Más grande) -->
     <div id="modal-pedido" class="fixed inset-0 bg-black/90 backdrop-blur-md hidden items-center justify-center z-50 p-4">
         <div class="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 w-full max-w-3xl shadow-[0_0_50px_rgba(0,0,0,0.8)] relative flex flex-col max-h-[90vh]">
@@ -270,6 +284,7 @@
         }
 
        // 5. Cargar la Tabla de Pedidos (Con Mapa GPS)
+        // 5. Cargar la Tabla de Pedidos y Calcular Métricas
         async function cargarPedidos() {
             const tbody = document.getElementById('tabla-pedidos');
             tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500 font-mono">Sincronizando base de datos...</td></tr>';
@@ -278,8 +293,16 @@
                 const { data, error } = await db.from('pedidos').select('*').order('creado_en', { ascending: false });
                 if (error) throw error;
 
+                // Variables para nuestras métricas
+                let totalIngresos = 0;
+                let pedidosPendientes = 0;
+                let totalPrendasVendidas = 0;
+
                 if (data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500">Aún no hay pedidos registrados.</td></tr>';
+                    document.getElementById('metric-ingresos').innerText = '$0 MXN';
+                    document.getElementById('metric-pendientes').innerText = '0';
+                    document.getElementById('metric-prendas').innerText = '0 pz';
                     return;
                 }
 
@@ -288,7 +311,19 @@
                     const isEnviado = p.estado && p.estado.toLowerCase() === 'enviado';
                     const badgeClass = isEnviado ? "bg-green-500/20 text-green-500 border-green-500/30" : "bg-yellow-500/20 text-yellow-500 border-yellow-500/30";
                     
-                    const prodJSON = encodeURIComponent(typeof p.productos === 'string' ? p.productos : JSON.stringify(p.productos));
+                    // --- CÁLCULO DE MÉTRICAS ---
+                    totalIngresos += parseFloat(p.total) || 0;
+                    if (!isEnviado) pedidosPendientes++;
+                    
+                    const prodEncoded = encodeURIComponent(typeof p.productos === 'string' ? p.productos : JSON.stringify(p.productos));
+                    
+                    try {
+                        const productosObj = typeof p.productos === 'string' ? JSON.parse(p.productos) : p.productos;
+                        productosObj.forEach(item => {
+                            totalPrendasVendidas += parseInt(item.amount) || 0;
+                        });
+                    } catch(e) {}
+                    // ---------------------------
 
                     // Botón de Google Maps si hay coordenadas
                     let btnMapa = '';
@@ -315,11 +350,17 @@
                             </span>
                         </td>
                         <td class="p-3 text-center flex items-center justify-center gap-2">
-                            <button onclick="abrirModalPedido('${prodJSON}')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition">Productos</button>
+                            <button onclick="abrirModalPedido('${prodEncoded}')" class="bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition">Productos</button>
                             ${!isEnviado ? `<button onclick="marcarEnviado(${p.id})" class="bg-[#b91c1c] hover:bg-[#dc2626] text-white px-3 py-1.5 rounded text-[10px] font-bold uppercase transition shadow-lg shadow-red-900/20">Aprobar</button>` : ''}
                         </td>
                     </tr>`;
                 }).join('');
+
+                // Imprimimos los números en las tarjetas
+                document.getElementById('metric-ingresos').innerText = '$' + totalIngresos.toLocaleString('es-MX');
+                document.getElementById('metric-pendientes').innerText = pedidosPendientes;
+                document.getElementById('metric-prendas').innerText = totalPrendasVendidas + ' pz';
+
             } catch (err) {
                 console.error(err);
                 tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-red-500">Error al cargar pedidos. Verifica la consola.</td></tr>';
