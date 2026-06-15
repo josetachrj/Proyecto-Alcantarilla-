@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - ALCANTARILLA</title>
+    <title>Mi Cuenta - ALCANTARILLA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -26,30 +26,55 @@
         Volver a la tienda
     </a>
 
-    <div class="w-full max-w-md bg-black/60 p-8 md:p-10 rounded-3xl border border-white/10 backdrop-blur-xl shadow-2xl">
-        <div class="flex justify-center mb-8">
+    <div class="w-full max-w-md bg-black/60 p-8 md:p-10 rounded-3xl border border-white/10 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] min-h-[400px] flex flex-col justify-center relative">
+        
+        <div class="flex justify-center mb-6">
             <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="w-20 h-20 rounded-full border border-white/10 object-cover shadow-lg">
         </div>
         
-        <h1 class="text-2xl font-black uppercase text-white text-center mb-2 tracking-widest">Acceso al Clan</h1>
-        <p class="text-xs text-neutral-400 text-center mb-8 uppercase tracking-wider">Inicia sesión o crea tu cuenta</p>
+        <!-- PANTALLA DE CARGA (Se oculta al detectar la sesión) -->
+        <div id="loader-view" class="flex flex-col items-center justify-center space-y-4">
+            <div class="w-8 h-8 border-4 border-[#b91c1c] border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs text-neutral-500 uppercase tracking-widest font-mono">Verificando pase...</p>
+        </div>
 
-        <form id="auth-form" class="space-y-5">
-            <div>
-                <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Correo Electrónico</label>
-                <input type="email" id="auth-email" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Contraseña</label>
-                <input type="password" id="auth-pass" required minlength="6" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
-            </div>
+        <!-- PANTALLA 1: FORMULARIO DE LOGIN (Oculto por defecto) -->
+        <div id="login-view" class="hidden w-full">
+            <h1 class="text-2xl font-black uppercase text-white text-center mb-2 tracking-widest">Acceso al Clan</h1>
+            <p class="text-xs text-neutral-400 text-center mb-8 uppercase tracking-wider">Inicia sesión o crea tu cuenta</p>
 
-            <div class="pt-4 flex flex-col gap-3">
-                <button type="submit" id="btn-login" onclick="iniciarSesion(event)" class="w-full bg-white text-black font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-neutral-300 transition shadow-lg">Iniciar Sesión</button>
-                
-                <button type="button" id="btn-register" onclick="crearCuenta(event)" class="w-full bg-transparent border border-white/20 text-white font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-white/10 transition">Crear Cuenta</button>
+            <form id="auth-form" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Correo Electrónico</label>
+                    <input type="email" id="auth-email" required class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-neutral-400 uppercase mb-2">Contraseña</label>
+                    <input type="password" id="auth-pass" required minlength="6" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#b91c1c] transition">
+                </div>
+
+                <div class="pt-4 flex flex-col gap-3">
+                    <button type="submit" id="btn-login" onclick="iniciarSesion(event)" class="w-full bg-white text-black font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-neutral-300 transition shadow-lg">Iniciar Sesión</button>
+                    
+                    <button type="button" id="btn-register" onclick="crearCuenta(event)" class="w-full bg-transparent border border-white/20 text-white font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-white/10 transition">Crear Cuenta</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- PANTALLA 2: PANEL DEL CLIENTE LOGUEADO (Oculto por defecto) -->
+        <div id="dashboard-view" class="hidden flex-col items-center text-center space-y-6 w-full">
+            <div>
+                <h2 class="text-xl font-black text-white uppercase tracking-widest">Bienvenido de vuelta</h2>
+                <p id="user-email-display" class="text-xs text-[#b91c1c] font-mono mt-2 bg-white/5 px-3 py-1 rounded inline-block border border-white/10"></p>
             </div>
-        </form>
+            
+            <div class="w-full space-y-3 pt-6 border-t border-white/10">
+                <a href="rastreo.html" class="block w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-[#dc2626] transition shadow-lg shadow-red-900/20">📍 Rastrear Mis Pedidos</a>
+                <a href="Colecciones.html" class="block w-full bg-white/5 text-white font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-white/10 transition border border-white/10">Ir a la Tienda</a>
+                <button onclick="cerrarSesion()" class="w-full bg-transparent text-neutral-500 font-bold py-3.5 rounded-xl uppercase tracking-widest text-[10px] hover:text-white transition mt-2">Cerrar Sesión</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- Contenedor Toasts -->
@@ -60,9 +85,46 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
         const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        // CORREO ADMIN ASEGURADO EN MINÚSCULAS
         const CORREO_ADMIN = 'shopalcantarilla@gmail.com'.toLowerCase(); 
 
+        // 1. EL GUARDIÁN DE SESIÓN (Se ejecuta al abrir la página)
+        async function verificarSesion() {
+            try {
+                const { data: { user }, error } = await db.auth.getUser();
+                
+                // Ocultamos el ícono de carga
+                document.getElementById('loader-view').classList.add('hidden');
+
+                if (user) {
+                    // SI ESTÁ LOGUEADO: Verificamos si es el admin
+                    if (user.email.toLowerCase() === CORREO_ADMIN) {
+                        window.location.href = 'admin.html'; // Lo mandamos a su panel
+                    } else {
+                        // Es cliente: Le mostramos su Dashboard
+                        document.getElementById('dashboard-view').classList.remove('hidden');
+                        document.getElementById('dashboard-view').classList.add('flex');
+                        document.getElementById('user-email-display').innerText = user.email;
+                    }
+                } else {
+                    // NO ESTÁ LOGUEADO: Le mostramos el formulario
+                    document.getElementById('login-view').classList.remove('hidden');
+                }
+            } catch (err) {
+                document.getElementById('loader-view').classList.add('hidden');
+                document.getElementById('login-view').classList.remove('hidden');
+            }
+        }
+
+        // Ejecutar el guardián al cargar la página
+        document.addEventListener('DOMContentLoaded', verificarSesion);
+
+        // 2. FUNCIÓN PARA CERRAR SESIÓN
+        async function cerrarSesion() {
+            await db.auth.signOut();
+            window.location.reload(); // Recarga la página y mostrará el formulario de login de nuevo
+        }
+
+        // 3. LÓGICA DE LOGIN ORIGINAL
         async function iniciarSesion(e) {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -78,13 +140,12 @@
 
                 showToast('Éxito', 'Acceso concedido.');
                 
-                // REDIRECCIÓN INTELIGENTE
                 setTimeout(() => {
                     const emailUsuario = data.user.email.toLowerCase();
                     if (emailUsuario === CORREO_ADMIN) {
-                        window.location.href = 'admin.html'; // El jefe va al panel
+                        window.location.href = 'admin.html';
                     } else {
-                        window.location.href = 'Colecciones.html'; // Clientes a la tienda
+                        window.location.reload(); // Recarga la página para mostrar el Dashboard
                     }
                 }, 1000);
 
@@ -109,13 +170,12 @@
 
                 showToast('Bienvenido', 'Tu cuenta ha sido creada. Entrando...');
                 
-                // REDIRECCIÓN INTELIGENTE TAMBIÉN AL CREAR CUENTA
                 setTimeout(() => {
                     const emailUsuario = data.user.email.toLowerCase();
                     if (emailUsuario === CORREO_ADMIN) {
                         window.location.href = 'admin.html';
                     } else {
-                        window.location.href = 'Colecciones.html';
+                        window.location.reload(); // Recarga la página para mostrar el Dashboard
                     }
                 }, 1500);
 
@@ -135,3 +195,5 @@
             setTimeout(() => { toast.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
     </script>
+</body>
+</html>
