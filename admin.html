@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin V2.7 - ALCANTARILLA</title>
+    <title>Admin V2.8 - ALCANTARILLA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -24,7 +24,7 @@
     <aside class="w-64 border-r border-white/10 bg-[#0a0a0a] flex flex-col p-6 shrink-0">
         <div class="flex items-center gap-3 mb-12">
             <img src="Images/logo2.jpeg" alt="Logo" class="w-10 h-10 rounded-full border border-white/10 object-cover">
-            <h1 class="text-sm font-black uppercase tracking-widest text-white">ADMIN V2.7</h1>
+            <h1 class="text-sm font-black uppercase tracking-widest text-white">ADMIN V2.8</h1>
         </div>
         <nav class="flex flex-col gap-3 flex-grow">
             <button onclick="cambiarSeccion('inventario')" id="btn-inventario" class="bg-[#b91c1c] text-white font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-lg flex items-center gap-2 shadow-lg shadow-red-900/20 transition text-left">
@@ -33,9 +33,14 @@
             <button onclick="cambiarSeccion('pedidos')" id="btn-pedidos" class="bg-transparent text-neutral-400 hover:text-white font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-lg flex items-center gap-2 transition text-left">
                 🛒 PEDIDOS
             </button>
+            
             <a href="Colecciones.html" class="text-neutral-400 hover:text-white font-bold text-xs uppercase tracking-widest px-4 py-3 rounded-lg flex items-center gap-2 transition mt-auto">
                 TIENDA PÚBLICA ↗
             </a>
+            
+            <button onclick="window.cerrarSesionAdmin()" class="text-neutral-500 hover:text-rose-500 font-bold text-[10px] uppercase tracking-widest px-4 py-3 rounded-lg flex items-center gap-2 transition text-left border border-white/5 hover:border-rose-500/20 bg-white/5">
+                🚪 CERRAR SESIÓN
+            </button>
         </nav>
     </aside>
 
@@ -205,7 +210,6 @@
 
         const CORREO_ADMIN = 'shopalcantarilla@gmail.com'.toLowerCase(); 
         
-        // Memoria caché para hacer la búsqueda instantánea sin saturar Supabase
         window.pedidosCache = [];
         window.filtroEstadoActual = 'todos';
 
@@ -221,6 +225,15 @@
             }
         }
         verificarAdmin();
+
+        // NUEVO: FUNCIÓN PARA CERRAR SESIÓN DE ADMINISTRADOR
+        async function cerrarSesionAdmin() {
+            if(confirm('¿Seguro que deseas cerrar tu sesión de administrador?')) {
+                await db.auth.signOut();
+                window.location.href = 'login.html'; // Te manda al login vacío
+            }
+        }
+        window.cerrarSesionAdmin = cerrarSesionAdmin;
 
         function cambiarSeccion(seccion) {
             const secInventario = document.getElementById('seccion-inventario');
@@ -280,7 +293,6 @@
             }
         }
 
-        // Carga los datos de Supabase y calcula las métricas globales
         async function cargarPedidos() {
             const tbody = document.getElementById('tabla-pedidos');
             tbody.innerHTML = '<tr><td colspan="7" class="p-8 text-center text-neutral-500 font-mono">Sincronizando base de datos...</td></tr>';
@@ -289,7 +301,7 @@
                 const { data, error } = await db.from('pedidos').select('*').order('creado_en', { ascending: false });
                 if (error) throw error;
 
-                window.pedidosCache = data; // Respaldamos los datos en memoria
+                window.pedidosCache = data;
 
                 let totalIngresos = 0;
                 let pedidosPendientes = 0;
@@ -303,7 +315,6 @@
                     return;
                 }
 
-                // Las métricas se calculan SIEMPRE sobre el total de la base de datos
                 data.forEach(p => {
                     const isEnviado = p.estado && p.estado.toLowerCase() === 'enviado';
                     totalIngresos += parseFloat(p.total) || 0;
@@ -319,7 +330,6 @@
                 document.getElementById('metric-pendientes').innerText = pedidosPendientes;
                 document.getElementById('metric-prendas').innerText = totalPrendasVendidas + ' pz';
 
-                // Llamamos a pintar los filtros sobre la interfaz
                 window.filtrarPedidosUI();
 
             } catch (err) {
@@ -328,7 +338,6 @@
             }
         }
 
-        // Lógica de pestañas de filtrado de estados
         window.cambiarFiltroEstado = function(estado) {
             window.filtroEstadoActual = estado;
             ['todos', 'pendiente', 'enviado'].forEach(est => {
@@ -342,14 +351,12 @@
             window.filtrarPedidosUI();
         };
 
-        // Combina el buscador de texto y los botones de estado
         window.filtrarPedidosUI = function() {
             const tbody = document.getElementById('tabla-pedidos');
             const termino = document.getElementById('buscar-pedido').value.toLowerCase().trim();
             
             let listaFiltrada = window.pedidosCache;
 
-            // 1. Filtrar por Botón de Estado (Todos / Pendiente / Enviado)
             if (window.filtroEstadoActual !== 'todos') {
                 listaFiltrada = listaFiltrada.filter(p => {
                     const est = (p.estado || 'pendiente').toLowerCase();
@@ -357,7 +364,6 @@
                 });
             }
 
-            // 2. Filtrar por el término escrito en la barra de búsqueda
             if (termino) {
                 listaFiltrada = listaFiltrada.filter(p => {
                     const nombre = (p.nombre || '').toLowerCase();
@@ -373,7 +379,6 @@
                 return;
             }
 
-            // 3. Pintar los resultados filtrados
             tbody.innerHTML = listaFiltrada.map(p => {
                 const fecha = new Date(p.creado_en).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 const isEnviado = p.estado && p.estado.toLowerCase() === 'enviado';
