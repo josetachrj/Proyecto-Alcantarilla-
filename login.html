@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Cuenta - ALCANTARILLA</title>
+    <title>Acceso - ALCANTARILLA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -32,13 +32,11 @@
             <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="w-20 h-20 rounded-full border border-white/10 object-cover shadow-lg">
         </div>
         
-        <!-- PANTALLA DE CARGA (Se oculta al detectar la sesión) -->
         <div id="loader-view" class="flex flex-col items-center justify-center space-y-4">
             <div class="w-8 h-8 border-4 border-[#b91c1c] border-t-transparent rounded-full animate-spin"></div>
             <p class="text-xs text-neutral-500 uppercase tracking-widest font-mono">Verificando pase...</p>
         </div>
 
-        <!-- PANTALLA 1: FORMULARIO DE LOGIN (Oculto por defecto) -->
         <div id="login-view" class="hidden w-full">
             <h1 class="text-2xl font-black uppercase text-white text-center mb-2 tracking-widest">Acceso al Clan</h1>
             <p class="text-xs text-neutral-400 text-center mb-8 uppercase tracking-wider">Inicia sesión o crea tu cuenta</p>
@@ -61,23 +59,8 @@
             </form>
         </div>
 
-        <!-- PANTALLA 2: PANEL DEL CLIENTE LOGUEADO (Oculto por defecto) -->
-        <div id="dashboard-view" class="hidden flex-col items-center text-center space-y-6 w-full">
-            <div>
-                <h2 class="text-xl font-black text-white uppercase tracking-widest">Bienvenido de vuelta</h2>
-                <p id="user-email-display" class="text-xs text-[#b91c1c] font-mono mt-2 bg-white/5 px-3 py-1 rounded inline-block border border-white/10"></p>
-            </div>
-            
-            <div class="w-full space-y-3 pt-6 border-t border-white/10">
-                <a href="rastreo.html" class="block w-full bg-[#b91c1c] text-white font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-[#dc2626] transition shadow-lg shadow-red-900/20">📍 Rastrear Mis Pedidos</a>
-                <a href="Colecciones.html" class="block w-full bg-white/5 text-white font-black py-3.5 rounded-xl uppercase tracking-widest text-xs hover:bg-white/10 transition border border-white/10">Ir a la Tienda</a>
-                <button onclick="cerrarSesion()" class="w-full bg-transparent text-neutral-500 font-bold py-3.5 rounded-xl uppercase tracking-widest text-[10px] hover:text-white transition mt-2">Cerrar Sesión</button>
-            </div>
-        </div>
-
     </div>
 
-    <!-- Contenedor Toasts -->
     <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 pointer-events-none"></div>
 
    <script>
@@ -87,26 +70,21 @@
 
         const CORREO_ADMIN = 'shopalcantarilla@gmail.com'.toLowerCase(); 
 
-        // 1. EL GUARDIÁN DE SESIÓN (Se ejecuta al abrir la página)
+        // 1. EL GUARDIÁN DE SESIÓN CORREGIDO
         async function verificarSesion() {
             try {
                 const { data: { user }, error } = await db.auth.getUser();
                 
-                // Ocultamos el ícono de carga
-                document.getElementById('loader-view').classList.add('hidden');
-
                 if (user) {
-                    // SI ESTÁ LOGUEADO: Verificamos si es el admin
+                    // SI YA HAY SESIÓN: Redirección inmediata según el rol
                     if (user.email.toLowerCase() === CORREO_ADMIN) {
-                        window.location.href = 'admin.html'; // Lo mandamos a su panel
+                        window.location.href = 'admin.html'; // Dueño va al panel
                     } else {
-                        // Es cliente: Le mostramos su Dashboard
-                        document.getElementById('dashboard-view').classList.remove('hidden');
-                        document.getElementById('dashboard-view').classList.add('flex');
-                        document.getElementById('user-email-display').innerText = user.email;
+                        window.location.href = 'Colecciones.html'; // Clientes van directo a comprar
                     }
                 } else {
-                    // NO ESTÁ LOGUEADO: Le mostramos el formulario
+                    // NO HAY SESIÓN: Quitamos el loader y mostramos el formulario
+                    document.getElementById('loader-view').classList.add('hidden');
                     document.getElementById('login-view').classList.remove('hidden');
                 }
             } catch (err) {
@@ -115,16 +93,9 @@
             }
         }
 
-        // Ejecutar el guardián al cargar la página
         document.addEventListener('DOMContentLoaded', verificarSesion);
 
-        // 2. FUNCIÓN PARA CERRAR SESIÓN
-        async function cerrarSesion() {
-            await db.auth.signOut();
-            window.location.reload(); // Recarga la página y mostrará el formulario de login de nuevo
-        }
-
-        // 3. LÓGICA DE LOGIN ORIGINAL
+        // 2. LOGUEARSE E IR DIRECTO A LA TIENDA
         async function iniciarSesion(e) {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -145,7 +116,7 @@
                     if (emailUsuario === CORREO_ADMIN) {
                         window.location.href = 'admin.html';
                     } else {
-                        window.location.reload(); // Recarga la página para mostrar el Dashboard
+                        window.location.href = 'Colecciones.html'; // Redirección directa sin escalas
                     }
                 }, 1000);
 
@@ -155,6 +126,7 @@
             }
         }
 
+        // 3. REGISTRARSE E IR DIRECTO A LA TIENDA
         async function crearCuenta(e) {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -175,7 +147,7 @@
                     if (emailUsuario === CORREO_ADMIN) {
                         window.location.href = 'admin.html';
                     } else {
-                        window.location.reload(); // Recarga la página para mostrar el Dashboard
+                        window.location.href = 'Colecciones.html'; // Redirección directa tras registro
                     }
                 }, 1500);
 
