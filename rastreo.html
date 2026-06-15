@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastreo de Pedido - ALCANTARILLA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #050505; 
+            color: #ffffff; 
+            background-image: url('Images/fondo.png');
+            background-repeat: repeat;
+            background-size: 300px;
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 relative">
+
+    <!-- Botón Volver -->
+    <a href="Colecciones.html" class="absolute top-6 left-6 text-neutral-400 hover:text-white flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Tienda
+    </a>
+
+    <!-- Contenedor Principal -->
+    <div class="w-full max-w-lg bg-black/60 border border-white/10 rounded-3xl p-8 md:p-12 backdrop-blur-2xl shadow-[0_0_50px_rgba(0,0,0,0.8)] text-center relative overflow-hidden">
+        
+        <!-- Decoración de fondo -->
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#050505] via-[#b91c1c] to-[#050505]"></div>
+
+        <img src="Images/logo2.jpeg" alt="ALCANTARILLA" class="w-20 h-20 mx-auto rounded-full border border-white/10 object-cover mb-6 shadow-xl">
+        
+        <h1 class="text-3xl font-black uppercase tracking-widest text-white mb-2">Rastreador</h1>
+        <p class="text-xs text-neutral-400 font-medium mb-8">Ingresa el correo electrónico con el que realizaste tu compra para consultar el estado actual.</p>
+
+        <!-- Formulario -->
+        <form id="form-rastreo" onsubmit="buscarPedido(event)" class="space-y-4">
+            <input type="email" id="correo-rastreo" required placeholder="correo@ejemplo.com" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-center text-white focus:outline-none focus:border-[#b91c1c] transition shadow-inner">
+            <button type="submit" id="btn-rastrear" class="w-full bg-[#b91c1c] text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm hover:bg-[#dc2626] transition shadow-lg shadow-[#b91c1c]/20">Buscar Pedido</button>
+        </form>
+
+        <!-- Resultados -->
+        <div id="resultados-container" class="mt-8 space-y-4 text-left hidden">
+            <!-- Se llena con JS -->
+        </div>
+    </div>
+
+    <script>
+        const supabaseUrl = 'https://ercphbjivnmytwbslqit.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyY3BoYmppdm5teXR3YnNscWl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyOTkxMzcsImV4cCI6MjA5Njg3NTEzN30.JCKW9bV1IQLbhI26kgTyFhyHUbEV58FSSzVj9SE_D-w';
+        const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function buscarPedido(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-rastrear');
+            const correo = document.getElementById('correo-rastreo').value.trim();
+            const container = document.getElementById('resultados-container');
+
+            btn.innerText = "BUSCANDO...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            container.innerHTML = '';
+            container.classList.add('hidden');
+
+            try {
+                // Llamamos a nuestro "Túnel Seguro" (La función RPC)
+                const { data, error } = await db.rpc('rastrear_pedido', { correo_cliente: correo });
+
+                if (error) throw error;
+
+                container.classList.remove('hidden');
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = `
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
+                            <p class="text-neutral-400 text-sm">No encontramos ningún pedido registrado con este correo.</p>
+                        </div>`;
+                    return;
+                }
+
+                // Generar tarjetas para cada pedido encontrado
+                container.innerHTML = data.map((pedido, index) => {
+                    const fecha = new Date(pedido.fecha).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' });
+                    const isEnviado = pedido.estado.toLowerCase() === 'enviado';
+                    
+                    const colorEstado = isEnviado ? 'text-green-500' : 'text-yellow-500';
+                    const iconEstado = isEnviado 
+                        ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
+                        : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                    const msjEstado = isEnviado ? 'En Camino / Entregado' : 'Preparando Paquete';
+
+                    return `
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-5 relative overflow-hidden transition hover:border-white/20">
+                            ${index === 0 ? '<div class="absolute top-0 right-0 bg-[#b91c1c] text-white text-[9px] font-bold uppercase px-3 py-1 rounded-bl-lg">Más Reciente</div>' : ''}
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-full bg-black/50 border border-white/10 flex items-center justify-center ${colorEstado}">
+                                    ${iconEstado}
+                                </div>
+                                <div>
+                                    <h3 class="text-white font-black uppercase tracking-wider text-sm">${msjEstado}</h3>
+                                    <p class="text-neutral-500 text-xs font-mono">Fecha de orden: ${fecha}</p>
+                                </div>
+                            </div>
+                            <div class="border-t border-white/5 pt-3 flex justify-between items-center text-xs">
+                                <span class="text-neutral-400 uppercase tracking-widest">Estado en sistema:</span>
+                                <span class="${colorEstado} font-black uppercase tracking-widest bg-white/5 px-2 py-1 rounded border border-white/5">${pedido.estado}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error(err);
+                container.classList.remove('hidden');
+                container.innerHTML = `<p class="text-rose-500 text-sm text-center">Hubo un error de conexión. Intenta de nuevo más tarde.</p>`;
+            } finally {
+                btn.innerText = "Buscar Pedido";
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
+        }
+    </script>
+</body>
+</html>
