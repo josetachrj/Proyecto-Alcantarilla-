@@ -59,7 +59,6 @@
             <nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-neutral-300 bg-white/5 px-6 py-2 rounded-full border border-white/10 shadow-inner backdrop-blur-md">
                 <a href="index.html" class="hover:text-white transition">Novedades</a>
                 <a href="Colecciones.html" class="text-white transition">Colecciones</a>
-                
                 <a href="index.html#probador-ia" class="text-[#b91c1c] hover:text-[#dc2626] transition flex items-center gap-1">
                     <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
                     PROBADOR IA
@@ -140,7 +139,7 @@
                     <li><a href="#" class="hover:text-[#b91c1c] transition">X / Twitter</a></li>
                 </ul>
             </div>
-          <div>
+            <div>
                 <h3 class="font-bold text-white mb-4 text-sm uppercase tracking-widest">Tienda & Ayuda</h3>
                 <ul class="space-y-3 text-neutral-400 text-xs font-semibold">
                     <li><a href="rastreo.html" class="text-white hover:text-[#b91c1c] transition flex items-center gap-1.5"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Rastrear Mi Pedido</a></li>
@@ -285,7 +284,7 @@
         </div>
         <div id="fav-items-container" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar"></div>
         <div class="p-6 border-t border-white/10 bg-black/50">
-            <p class="text-neutral-500 text-center text-xs uppercase font-mono tracking-wider">Tus favoritos se mantendrán guardados</p>
+            <p class="text-neutral-500 text-center text-xs uppercase font-mono tracking-wider">Tus favoritos protegidos en la nube</p>
         </div>
     </div>
 
@@ -303,12 +302,55 @@
         window.currentFrontImg = '';
         window.currentBackImg = '';
         window.filtroTallas = [];
+        window.userEmail = null; // NUEVO: Para guardar el correo del cliente si está logueado
         
         window.reseñasPorDefecto = [
             { nombre_mostrar: "Andrea G.", texto: "Lo mejor que he comprado este año. La IA no falla.", estrellas: 5, compra_verificada: true },
             { nombre_mostrar: "Daniel R.", texto: "Me encanta el estilo, nadie más tiene estas prendas. El envío fue rápido.", estrellas: 4, compra_verificada: true },
             { nombre_mostrar: "Carlos M.", texto: "La chamarra superó mis expectativas. El fit es perfecto.", estrellas: 5, compra_verificada: true }
         ];
+
+        // NUEVO: SISTEMA DE SINCRONIZACIÓN CON LA NUBE
+        window.verificarSesionYCloud = async function() {
+            const { data: { user } } = await window.db.auth.getUser();
+            if(user) {
+                window.userEmail = user.email;
+                
+                // Buscar carrito en la nube
+                const { data: dataC } = await window.db.from('carritos').select('items').eq('email', user.email).single();
+                if(dataC && dataC.items && dataC.items.length > 0) {
+                    window.carrito = dataC.items; 
+                    localStorage.setItem('alcantarillaCart', JSON.stringify(window.carrito));
+                } else if(window.carrito.length > 0) {
+                    window.sincronizarCarrito(); // Si la nube está vacía, subimos lo que traía en el celular
+                }
+
+                // Buscar favoritos en la nube
+                const { data: dataF } = await window.db.from('favoritos').select('items').eq('email', user.email).single();
+                if(dataF && dataF.items && dataF.items.length > 0) {
+                    window.favoritos = dataF.items;
+                    localStorage.setItem('alcantarillaFavs', JSON.stringify(window.favoritos));
+                } else if(window.favoritos.length > 0) {
+                    window.sincronizarFavoritos();
+                }
+            }
+            window.actualizarInterfazCarrito();
+            window.actualizarInterfazFavoritos();
+        };
+
+        window.sincronizarCarrito = async function() {
+            localStorage.setItem('alcantarillaCart', JSON.stringify(window.carrito));
+            if(window.userEmail) {
+                await window.db.from('carritos').upsert({ email: window.userEmail, items: window.carrito });
+            }
+        };
+
+        window.sincronizarFavoritos = async function() {
+            localStorage.setItem('alcantarillaFavs', JSON.stringify(window.favoritos));
+            if(window.userEmail) {
+                await window.db.from('favoritos').upsert({ email: window.userEmail, items: window.favoritos });
+            }
+        };
 
         window.closeAllDrawers = function() {
             try {
@@ -431,8 +473,6 @@
             }
         };
 
-        // --- INTELIGENCIA DE TALLA ---
-        // Esta función busca la primera talla que tenga piezas disponibles
         window.obtenerPrimeraTallaDisponible = function(prod) {
             if (!prod || !prod.stock) return 'M';
             if (prod.stock.M > 0) return 'M';
@@ -440,7 +480,7 @@
             if (prod.stock.S > 0) return 'S';
             if (prod.stock.XL > 0) return 'XL';
             if (prod.stock.XS > 0) return 'XS';
-            return 'M'; // Fallback por defecto si todo está en 0
+            return 'M';
         };
 
         window.renderProductosColecciones = function(listaARenderizar = window.catalogo) {
@@ -461,11 +501,9 @@
                 const safeImgFront = prod.imagen || '';
                 const safeImgBack = prod.imagen_espalda || '';
 
-                // Asignamos inteligentemente la primera talla disponible a este producto
                 const primeraDisponible = window.tallasSeleccionadas[prod.id] || window.obtenerPrimeraTallaDisponible(prod);
-                window.tallasSeleccionadas[prod.id] = primeraDisponible; // Guardamos la decisión para que funcione "Agregar al Carrito"
+                window.tallasSeleccionadas[prod.id] = primeraDisponible;
 
-                // Función auxiliar para pintar los botones de tallas correctamente
                 const getBtnClass = (talla) => {
                     if (prod.stock[talla] === 0) return 'opacity-30 cursor-not-allowed line-through bg-white/5 border-white/10 text-white';
                     if (primeraDisponible === talla) return 'bg-[#b91c1c] border-[#b91c1c] text-white talla-activa hover:bg-[#dc2626]';
@@ -546,7 +584,6 @@
         window.openQuickView = function(id, name, price, imgFront, imgBack) {
             const producto = window.catalogo.find(p => p.id === id);
             
-            // Usamos la misma inteligencia para la Vista Rápida
             window.qvActiveId = id; 
             window.qvActiveTalla = window.tallasSeleccionadas[id] || window.obtenerPrimeraTallaDisponible(producto);
             
@@ -605,13 +642,13 @@
             const index = window.favoritos.findIndex(item => item.id === id);
             if (index > -1) { window.favoritos.splice(index, 1); window.showToast('Favoritos', `Eliminaste ${nombre}`, true); } 
             else { window.favoritos.push({ id, nombre, precio, imagen }); window.showToast('Favoritos', `Guardaste ${nombre}`, true); }
-            localStorage.setItem('alcantarillaFavs', JSON.stringify(window.favoritos));
+            window.sincronizarFavoritos();
             window.actualizarInterfazFavoritos();
         };
 
         window.borrarFavoritoDirecto = function(id) { 
             window.favoritos = window.favoritos.filter(item => item.id !== id); 
-            localStorage.setItem('alcantarillaFavs', JSON.stringify(window.favoritos)); 
+            window.sincronizarFavoritos();
             window.actualizarInterfazFavoritos(); 
         };
 
@@ -646,7 +683,7 @@
             window.tallasSeleccionadas[productoId] = talla;
             document.querySelectorAll(`.t-container-${productoId}`).forEach(contenedor => {
                 for (let btn of contenedor.getElementsByTagName('button')) { 
-                    if(btn.disabled) continue; // Ignoramos las tallas agotadas para no cambiarles el color
+                    if(btn.disabled) continue; 
                     if(btn.innerText === talla) { btn.className = "w-8 h-8 bg-[#b91c1c] border-[#b91c1c] text-[10px] font-bold rounded text-white talla-activa transition hover:bg-[#dc2626]"; } 
                     else { btn.className = "w-8 h-8 bg-white/5 border border-white/10 text-[10px] font-bold rounded text-white hover:bg-white/20 transition"; }
                 }
@@ -664,7 +701,7 @@
             if (productoExistente) { productoExistente.amount += 1; } 
             else { window.carrito.push({ uniqueId: itemUniqueId, id, nombre: `${nombre} (${tallaSelect})`, precio, imagen, amount: 1 }); }
             
-            localStorage.setItem('alcantarillaCart', JSON.stringify(window.carrito));
+            window.sincronizarCarrito();
             window.actualizarInterfazCarrito();
             window.showToast('Carrito', `Añadiste 1x ${nombre} [${tallaSelect}]`);
         };
@@ -687,13 +724,13 @@
             if (cambio > 0 && producto.amount >= prodBase.stock[talla]) { window.showToast('Aviso', `Límite disponible alcanzado.`); return; }
             producto.amount += cambio;
             if (producto.amount <= 0) { window.eliminarDelCarrito(uniqueId); return; }
-            localStorage.setItem('alcantarillaCart', JSON.stringify(window.carrito));
+            window.sincronizarCarrito();
             window.actualizarInterfazCarrito();
         };
 
         window.eliminarDelCarrito = function(uniqueId) { 
             window.carrito = window.carrito.filter(item => item.uniqueId !== uniqueId); 
-            localStorage.setItem('alcantarillaCart', JSON.stringify(window.carrito)); 
+            window.sincronizarCarrito(); 
             window.actualizarInterfazCarrito(); 
         };
 
@@ -724,9 +761,8 @@
             if (btnOpenReview) btnOpenReview.addEventListener('click', () => { window.openReviewModal(); });
 
             window.cargarCatalogoSupabase();
-            window.actualizarInterfazCarrito();
-            window.actualizarInterfazFavoritos();
             window.cargarResenasSupabase(); 
+            window.verificarSesionYCloud(); 
         });
     </script>
 </body>
